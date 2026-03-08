@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/Browser-based-pdf-toolkit/",
   server: {
     port: 5173
   }
 });
-
