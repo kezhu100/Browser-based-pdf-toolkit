@@ -1,437 +1,389 @@
 # Browser-based PDF Toolkit — Project Context
 
-## 1. Project Overview
+This file is the primary context for AI assistants working on this repository.
 
-Browser-based PDF Toolkit 是一个 **完全浏览器本地运行的 PDF 工具网站**。
+AI agents should also read:
 
-核心特点：
+- AGENTS.md
+- docs/architecture.md
+- docs/implemented-phases.md
+- docs/codex_prompt_chain.md
 
-* 所有处理 **在浏览器本地完成**
-* **无服务器 / 无文件上传**
-* **零运行成本**
-* 支持常见文档格式转 PDF
-* 采用 **插件式架构**
+1 Project Overview
 
-技术栈：
+Browser-based PDF Toolkit 是一个 纯浏览器端 PDF 工具网站。
 
-* React
-* Vite
-* TypeScript
-* html2pdf.js
-* html2canvas
-* jsPDF
+核心目标：
 
-项目目标：
+不上传文件
 
-构建一个 **隐私友好 + 零成本 + 浏览器工具箱式 PDF Toolkit**。
+不需要服务器
 
----
+所有处理在浏览器完成
 
-# 2. Current Implemented Features
+保护用户隐私
 
-目前已经实现：
+零后端成本部署
 
-### Content → PDF
+当前在线版本：
 
-支持：
+https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 
-* Markdown → PDF
-* TXT → PDF
-* HTML → PDF
+部署平台：
 
-核心能力：
+GitHub Pages
+2 Tech Stack
 
-* 实时 Preview
-* 本地文件上传
-* 导出 PDF
-* PDF 页面设置
+前端技术栈：
 
-可调参数：
+React
+TypeScript
+Vite
+React Router
+html2canvas
 
-* Page Size (A4 / Letter)
-* Orientation (Portrait / Landscape)
-* Margin (mm)
+部署：
 
----
+GitHub Pages
+GitHub Actions (auto deploy)
 
-# 3. Project Architecture
+开发环境：
 
-项目采用 **Plugin-based architecture**。
+Node.js
+npm
+Vite dev server
+3 Project Architecture
 
-整体流程：
+项目采用 插件式工具架构 (Tool Plugin Architecture)。
 
-```
-User Input
-     │
-     ▼
-Tool Plugin
-     │
-     ▼
-Pipeline
-     │
-     ▼
+整体结构：
+
+src
+│
+├─ app
+│   ├─ router.tsx
+│   ├─ AppShell.tsx
+│   └─ pages
+│
+├─ components
+│   └─ content-tools
+│
+├─ pipeline
+│
+├─ pdf-engine
+│
+├─ preview-engine
+│
+├─ tools
+│   ├─ plugins
+│   └─ registry.ts
+│
+├─ state
+│
+├─ types
+│
+└─ utils
+
+架构流程：
+
+Input Document
+     ↓
+Document Pipeline
+     ↓
+Document Model
+     ↓
 Preview Engine
-     │
-     ▼
+     ↓
 PDF Engine
-     │
-     ▼
-Browser Download
-```
+     ↓
+Download
+4 Tool Plugin System
 
----
+每个工具是一个 ToolPlugin：
 
-# 4. Directory Structure
+示例：
 
-```
-src/
-  app/
-    AppShell.tsx
+markdownToPdfTool
+txtToPdfTool
+htmlToPdfTool
 
-  components/
-    content-tools/
-      ContentToolsWorkspace.tsx
-      EditorPanel.tsx
-      PreviewPanel.tsx
-      FileInputPanel.tsx
-      ExportPanel.tsx
-      ExportSettingsPanel.tsx
-      StatusPanel.tsx
+注册位置：
 
-  pipeline/
-    interfaces.ts
-
-  preview-engine/
-    interfaces.ts
-
-  pdf-engine/
-    adapters/
-      contentPdfGenerator.ts
-
-  tools/
-    plugins/
-      markdownToPdfTool.ts
-      txtToPdfTool.ts
-      htmlToPdfTool.ts
-      contentToolRunner.ts
-
-    registry.ts
-
-  styles/
-    global.css
-```
-
----
-
-# 5. Plugin Architecture
-
-每个工具是一个 **ToolPlugin**：
-
-```ts
-ToolPlugin {
-  id
-  name
-  description
-  run()
-  previewAdapter()
-}
-```
-
-目前实现：
-
-```
-markdown-to-pdf
-txt-to-pdf
-html-to-pdf
-```
+src/tools/registry.ts
 
 工具执行流程：
 
-```
-tool.run()
-  ↓
-pipeline.run()
-  ↓
-previewEngine.render()
-  ↓
-pdfEngine.generateFromModel()
-```
+ToolPlugin.run()
+      ↓
+DocumentPipeline
+      ↓
+PreviewRenderer
+      ↓
+UnifiedPdfEngine
+5 Current Features (MVP)
 
----
+已完成：
 
-# 6. Major Problems Encountered & Fixes
+Content → PDF
+Markdown → PDF
+TXT → PDF
+HTML → PDF
+UI
+Editor
+Preview
+Export
+File Upload
+Tool Selection
+PDF Export
+Page size
+Orientation
+Margin
+Download
+Preview
+Live preview
+HTML rendering
+6 Deployment Architecture
 
-## Problem 1 — PDF 导出空白
+网站部署方式：
 
-现象：
+GitHub Pages
 
-* Preview 正常
-* 下载 PDF 空白
+路由方案：
 
-原因：
+HashRouter
 
-html2canvas 在 **极端 off-screen DOM 节点**（如 left:-100000px）时无法正确渲染。
+示例：
 
-解决：
-
-使用 **renderable hidden host**：
-
-```
-position: fixed
-pointer-events: none
-z-index: -1
-```
-
-并等待 layout：
-
-```
-requestAnimationFrame
-```
-
----
-
-## Problem 2 — 大 Margin 内容被裁剪
-
-现象：
-
-* Margin 较大时
-* Preview 或 PDF 内容被裁剪
+#/tools
 
 原因：
 
-旧实现：
+GitHub Pages 是静态托管
+BrowserRouter 会导致刷新404
+HashRouter 更稳定
+7 Build & Deployment
 
-```
-host height = 1px
-overflow hidden
-```
+本地开发：
 
-解决：
+npm install
+npm run dev
 
-引入 **Page Box + Content Box 模型**
+构建：
 
-```
-pageBox
-   padding = margin
+npm run build
 
-contentBox
-   width = pageWidth - 2*margin
-```
+自动部署：
 
----
+git push
+↓
+GitHub Actions
+↓
+npm install
+npm run build
+↓
+deploy to GitHub Pages
 
-## Problem 3 — Preview 与 PDF 导出不一致
+Workflow：
 
-现象：
+.github/workflows/deploy-pages.yml
+8 Key Problems Encountered
+Problem 1
 
-* Preview 居中
-* PDF 内容贴左
+TypeScript build errors
 
 原因：
 
-导出只截取：
-
-```
-mount (content)
-```
-
-而不是：
-
-```
-pageBox
-```
+ToolPlugin generic types mismatch
+registry typing mismatch
 
 解决：
 
-```
-html2pdf().from(pageBox)
-```
+introduce AnyToolPlugin
+narrow ContentToolPlugin
+Problem 2
 
----
+Vite build succeeded but GitHub Pages failed
 
-## Problem 4 — TypeScript build error
+原因：
 
-现象：
-
-```
-activeTool possibly undefined
-ToolId not assignable to ContentToolId
-```
+base path mismatch
+repo name case mismatch
 
 解决：
 
-* 使用 `contentTools.find()` 获取 tool
-* narrowing tool type
-* ContentToolRunSettings extends Record<string, unknown>
+vite.config.ts base fix
+Problem 3
 
----
+React Router 404 on GitHub Pages
 
-# 7. Testing
+原因：
 
-手动测试文档：
+BrowserRouter requires server fallback
+GitHub Pages is static
 
-```
-TESTING.md
-```
+解决：
 
-测试内容：
+switch to HashRouter
+Problem 4
 
-* Markdown → PDF
-* TXT → PDF
-* HTML → PDF
-* Margin extremes
-* Orientation changes
-* File upload
-* Long content
-* Export correctness
+Blank page after deploy
 
----
+原因：
 
-# 8. Codex Prompt Strategy
+assets path mismatch
 
-开发过程中使用 **结构化提示词**驱动 Codex：
+解决：
 
-提示词格式：
+correct base path
+rebuild and redeploy
+9 Current Status
 
-```
-Follow docs/architecture.md and AGENTS.md strictly.
+当前项目已经：
 
-Problem:
-<describe bug>
+Local dev working
+Build successful
+GitHub Pages deployed
+HashRouter working
+Auto deploy enabled
+README bilingual
+
+在线 Demo：
+
+https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
+10 Future Roadmap
+Phase 1 (Completed)
+
+Content → PDF
+
+Markdown
+TXT
+HTML
+Phase 2
+
+Image → PDF
+
+PNG
+JPG
+Phase 3
+
+PDF Operations
+
+Merge PDF
+Split PDF
+Phase 4
+
+Page Operations
+
+Reorder pages
+Delete pages
+Rotate pages
+Phase 5
+
+Document Enhancement
+
+Watermark
+Page numbers
+Phase 6
+
+Optimization
+
+Bundle splitting
+Dynamic imports
+Reduce JS size
+Phase 7
+
+UX Improvements
+
+Drag & Drop
+Better preview
+Tooltips
+11 Codex Prompt Template
+
+推荐给 Codex 的 Prompt 模板：
+
+You are modifying a Vite + React + TypeScript project.
+
+Repository:
+<repo-url>
+
+Goals:
+<task description>
 
 Constraints:
-- frontend only
-- no backend
-- keep plugin architecture
-- keep pipeline flow
+
+1. Do not refactor unrelated architecture
+2. Keep existing ToolPlugin system
+3. Keep browser-only processing
+4. Do not introduce backend services
 
 Tasks:
-1. identify root cause
-2. implement fix
+
+1. implement feature X
+2. modify file Y
 
 Output:
-1. root cause summary
-2. updated file tree
-3. full code
-4. explanation
-5. verification steps
-```
 
----
+Show updated files only
+Explain changes briefly
+12 Deployment Constraints
 
-# 9. Development Phases
+项目必须保持：
 
-当前完成：
+Browser-only
+No backend
+No file upload to server
 
-```
-Phase 1 — Project skeleton
-Phase 2 — Types and contracts
-Phase 3 — First pipeline flow
-Phase 4 — Basic UI
-Phase 5 — Preview/export separation
-Phase 6 — File input + debounce
-Phase 7 — UI polish
-Phase 8 — Validation + stability
-```
+原因：
 
----
+privacy
+zero cost hosting
+GitHub Pages compatibility
+13 Important Config
+vite.config.ts
+base: "/Browser-based-pdf-toolkit/"
+Router
+createHashRouter
+Deploy
+GitHub Actions
+14 Project Goal
 
-# 10. Next Development Roadmap
+最终目标：
 
-## Phase 9
+构建一个：
 
-新增：
+browser-only PDF toolkit
 
-```
-Image → PDF
-```
+类似：
 
-支持：
+ilovepdf
+smallpdf
 
-* PNG
-* JPG
-* WebP
+但：
 
----
+no backend
+privacy friendly
+open source
+15 How to Continue Development
 
-## Phase 10
+开发新功能时：
 
-PDF manipulation：
+1 新建 ToolPlugin
 
-```
-PDF Merge
-PDF Split
-```
+src/tools/plugins
 
----
+2 注册工具
 
-## Phase 11
+registry.ts
 
-PDF editing：
+3 UI integration
 
-```
-Page reorder
-Page delete
-```
+ToolSelectionPanel
+ContentToolsWorkspace
+16 Notes for Future AI Sessions
 
----
+新 AI / Codex 必须知道：
 
-## Phase 12
-
-Document enhancement：
-
-```
-Watermark
-Page number
-```
-
----
-
-## Phase 13
-
-Advanced tools：
-
-```
-Compress PDF
-Rotate pages
-Extract pages
-```
-
----
-
-# 11. Future Architecture Rules
-
-保持：
-
-```
-Plugin architecture
-pipeline → preview → pdf engine
-frontend-only processing
-```
-
-禁止：
-
-```
-server upload
-backend dependency
-```
-
----
-
-# 12. Deployment Plan
-
-未来部署：
-
-```
-GitHub Pages
-Vercel
-Cloudflare Pages
-```
-
-目标：
-
-```
-完全免费部署
-```
-
----
+ToolPlugin architecture
+Browser-only constraint
+HashRouter for GitHub Pages
+GitHub Actions deploy

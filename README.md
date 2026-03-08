@@ -1,8 +1,8 @@
 # Browser-based PDF Toolkit
 
-A browser-only PDF conversion tool focused on privacy, zero backend cost, and simple usability.
+A browser-only PDF conversion tool focused on privacy, zero backend cost, and simple usability.(Fully developed by AI, I have zero experience in front-end development and no any manual code.)
 
-一个纯浏览器端 PDF 转换工具，强调隐私保护、零后端成本与易用性。
+一个纯浏览器端 PDF 转换工具，强调隐私保护、零后端成本与易用性。(纯ai打造，本人零前端经验，无任何手工代码)
 
 ## Live Demo
 
