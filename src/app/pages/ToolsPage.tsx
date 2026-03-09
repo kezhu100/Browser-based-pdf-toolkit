@@ -1,10 +1,10 @@
-import { ContentToolsWorkspace } from "../../components/content-tools/ContentToolsWorkspace";
+import { ToolWorkspaceRouter } from "../../components/workspaces/ToolWorkspaceRouter";
 
 export function ToolsPage() {
   return (
     <section className="tools-workspace">
-      <h2>Content Conversion Tools</h2>
-      <ContentToolsWorkspace />
+      <h2>Conversion Tools</h2>
+      <ToolWorkspaceRouter />
     </section>
   );
 }

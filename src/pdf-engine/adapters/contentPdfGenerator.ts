@@ -28,6 +28,40 @@ function waitForLayout(): Promise<void> {
   });
 }
 
+async function waitForImages(container: HTMLElement): Promise<void> {
+  const images = Array.from(container.querySelectorAll("img"));
+  if (images.length === 0) {
+    return;
+  }
+
+  await Promise.all(
+    images.map(async (image) => {
+      if (image.complete && image.naturalWidth > 0) {
+        return;
+      }
+
+      if (typeof image.decode === "function") {
+        try {
+          await image.decode();
+          return;
+        } catch {
+          // Fallback to load/error event listeners.
+        }
+      }
+
+      await new Promise<void>((resolve) => {
+        const clear = () => {
+          image.removeEventListener("load", clear);
+          image.removeEventListener("error", clear);
+          resolve();
+        };
+        image.addEventListener("load", clear, { once: true });
+        image.addEventListener("error", clear, { once: true });
+      });
+    })
+  );
+}
+
 export class Html2PdfRenderEngine implements PdfRenderEngine {
   async generateFromModel(request: GeneratePdfRequest): Promise<Result<PdfOperationResult>> {
     if (typeof window === "undefined" || typeof document === "undefined") {
@@ -87,6 +121,8 @@ export class Html2PdfRenderEngine implements PdfRenderEngine {
     document.body.appendChild(host);
 
     try {
+      await waitForLayout();
+      await waitForImages(pageBox);
       await waitForLayout();
 
       const worker = html2pdf()

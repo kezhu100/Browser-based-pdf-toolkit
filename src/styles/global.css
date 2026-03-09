@@ -90,6 +90,11 @@ body {
   gap: 8px;
 }
 
+.tool-list-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 .tool-btn {
   text-align: left;
   border: 1px solid #b8c3d8;
@@ -245,6 +250,19 @@ input[type="file"] {
   border: 1px solid #d7deea;
   padding: 6px 8px;
   text-align: left;
+}
+
+.preview-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.image-file-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .export-btn {

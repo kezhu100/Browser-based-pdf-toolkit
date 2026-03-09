@@ -154,3 +154,47 @@ Public-facing UI improvements and export configuration.
 - added ExportSettingsPanel
 - improved preview typography
 - added drag-and-drop file support
+
+## Phase 9
+Image to PDF implementation.
+
+### Scope
+Add browser-only image conversion in the existing plugin/workspace architecture.
+
+### Architectural changes
+- added `image-to-pdf` plugin with shared preview/pdf-engine flow
+- added image workspace path with drag/drop and file picker
+- integrated image workspace alongside content workspace without backend changes
+
+### Result
+- supports PNG/JPG/JPEG/WEBP image input
+- supports single-image and multi-image PDF export
+- preserves preview automatic + export explicit behavior
+
+## Phase 9.1
+Image flow stabilization patch.
+
+### Scope
+Stabilize existing Image -> PDF behavior without expanding feature scope.
+
+### Architectural changes
+- adjusted object URL cleanup lifecycle to revoke on replace/unmount without repeated transition revokes
+- synchronized preview signature state after export completion for reuse consistency
+- added conservative image max-height constraint for preview/export rendering path
+
+### Result
+Image conversion behavior remains unchanged functionally, with safer lifecycle handling and more stable export memory behavior for very large images.
+
+## Phase 9.5
+Workspace routing cleanup and lazy loading.
+
+### Scope
+Reduce `ToolsPage` coupling and prepare for more workspace families without changing plugin flow.
+
+### Architectural changes
+- added a small workspace resolver/config layer for conversion tools
+- extracted workspace selection/rendering into a dedicated workspace router component
+- switched workspace entry rendering to `React.lazy` + `Suspense` for workspace-level code splitting
+
+### Result
+Current markdown/txt/html and image workspace behavior is preserved, while `ToolsPage` is smaller and workspace loading is now lazy.

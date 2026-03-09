@@ -65,3 +65,37 @@ Every push to the `main` branch triggers build and deploy to GitHub Pages.
 - Merge / Split PDF
 - Page reordering
 - Watermark / page numbers
+
+## Latest Capabilities / 最新能力
+
+English:
+- Supported tools:
+  - Markdown -> PDF
+  - TXT -> PDF
+  - HTML -> PDF
+  - Image -> PDF
+- Image tool:
+  - PNG / JPG / JPEG / WEBP support
+  - single image -> single-page PDF
+  - multiple images -> multi-page PDF
+  - drag and drop upload
+  - local browser processing (no server upload)
+- Architecture update (Phase 9.5):
+  - workspace router layer for workspace-family resolution
+  - lazy loading for content/image workspaces via `React.lazy` + `Suspense`
+
+中文：
+- 已支持工具：
+  - Markdown -> PDF
+  - TXT -> PDF
+  - HTML -> PDF
+  - Image -> PDF
+- 图片工具能力：
+  - 支持 PNG / JPG / JPEG / WEBP
+  - 单图 -> 单页 PDF
+  - 多图 -> 多页 PDF
+  - 支持拖拽上传
+  - 全流程浏览器本地处理（不上传服务器）
+- 架构更新（Phase 9.5）：
+  - 新增 workspace router 层用于工作区家族路由
+  - content/image 工作区采用 `React.lazy` + `Suspense` 懒加载

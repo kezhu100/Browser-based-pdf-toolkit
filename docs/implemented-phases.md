@@ -47,7 +47,20 @@
 - Added disabled states and better user feedback in workspace actions
 - Improved README and phase documentation for public release readiness
 
-## Next Recommended Phase
-- Implement image-to-pdf in the same plugin + pipeline pattern
-- Add test coverage for content-flow validation and signature reuse safety
-- Start manipulation tools as separate scoped phases without mixing UI concerns
+## Phase 9 - Image to PDF
+- Implemented `image-to-pdf` plugin and integrated it into the conversion workspace
+- Added browser-only image input support for PNG/JPG/JPEG/WEBP
+- Added single-image and multi-image export flow (one image per page)
+- Added drag/drop + file picker path for image files
+- Kept preview automatic and export explicit with existing export settings reuse
+
+## Phase 9.1 - Image Flow Stabilization Patch
+- Fixed image object URL cleanup timing to avoid unnecessary repeated revocation during normal state transitions
+- Synced preview signature state after export to keep preview/export reuse checks consistent
+- Added conservative image display constraint to reduce excessive render/canvas memory pressure on very large images
+
+## Phase 9.5 - Workspace Routing and Lazy Loading Cleanup
+- Extracted tool workspace selection into a dedicated workspace router layer
+- Reduced `ToolsPage` coupling to specific workspace implementations
+- Added lazy loading for current workspace families (`content`, `image`) with `Suspense` fallback
+- Preserved existing content/image plugin execution flow and browser-only behavior
