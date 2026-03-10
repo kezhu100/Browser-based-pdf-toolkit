@@ -1,9 +1,10 @@
 import { Suspense, lazy, useMemo } from "react";
 import { useAppStore } from "../../state/useAppStore";
 import {
-  CONVERSION_TOOL_IDS,
-  getWorkspaceToolLabel,
-  resolveSelectedConversionToolId,
+  WORKSPACE_FAMILIES,
+  getWorkspaceDefaultToolId,
+  getWorkspaceFamilyLabel,
+  resolveSelectedWorkspaceToolId,
   resolveWorkspaceFamily
 } from "./config";
 
@@ -17,28 +18,38 @@ const LazyImageToolsWorkspace = lazy(async () => {
   return { default: module.ImageToolsWorkspace };
 });
 
+const LazyPdfToolsWorkspace = lazy(async () => {
+  const module = await import("../pdf-tools/PdfToolsWorkspace");
+  return { default: module.PdfToolsWorkspace };
+});
+
 export function ToolWorkspaceRouter() {
   const activeToolId = useAppStore((state) => state.activeToolId);
   const setActiveTool = useAppStore((state) => state.setActiveTool);
 
-  const selectedToolId = useMemo(() => resolveSelectedConversionToolId(activeToolId), [activeToolId]);
+  const selectedToolId = useMemo(() => resolveSelectedWorkspaceToolId(activeToolId), [activeToolId]);
   const workspaceFamily = useMemo(() => resolveWorkspaceFamily(selectedToolId), [selectedToolId]);
 
-  const WorkspaceComponent = workspaceFamily === "image" ? LazyImageToolsWorkspace : LazyContentToolsWorkspace;
+  const WorkspaceComponent =
+    workspaceFamily === "image"
+      ? LazyImageToolsWorkspace
+      : workspaceFamily === "pdf"
+        ? LazyPdfToolsWorkspace
+        : LazyContentToolsWorkspace;
 
   return (
     <>
       <section className="panel">
         <h3>Workspace Mode</h3>
         <div className="tool-list tool-list-inline">
-          {CONVERSION_TOOL_IDS.map((toolId) => (
+          {WORKSPACE_FAMILIES.map((family) => (
             <button
-              key={toolId}
+              key={family}
               type="button"
-              className={toolId === selectedToolId ? "tool-btn active" : "tool-btn"}
-              onClick={() => setActiveTool(toolId)}
+              className={family === workspaceFamily ? "tool-btn active" : "tool-btn"}
+              onClick={() => setActiveTool(getWorkspaceDefaultToolId(family))}
             >
-              {getWorkspaceToolLabel(toolId)}
+              {getWorkspaceFamilyLabel(family)}
             </button>
           ))}
         </div>

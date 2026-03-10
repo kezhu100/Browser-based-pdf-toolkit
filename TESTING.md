@@ -1,105 +1,83 @@
-# Manual Testing Guide / 手工测试指南
+﻿# Manual Testing Guide
 
-This document describes how to manually verify the functionality of the **Browser-based PDF Toolkit**.
+This document describes how to manually verify the current functionality of the Browser-based PDF Toolkit.
 
-本文档用于指导开发者或贡献者 **手动测试 Browser-based PDF Toolkit 当前版本的功能是否正常**。
+All processing runs locally in the browser.
 
-The current version supports the following tools:
+- no backend
+- no server file upload
+- no paid API
 
-当前版本支持以下工具：
-
-- Markdown → PDF
-- TXT → PDF
-- HTML → PDF
-
-All processing runs **locally in the browser**.
-
-所有处理 **完全在浏览器本地执行**：
-
-- no backend / 无后端
-- no file upload / 不上传文件
-- no paid API / 无付费 API
-
----
-
-# 1. Testing Environment / 测试环境
+## 1. Testing Environment
 
 Recommended environment:
 
-推荐测试环境：
+- Node.js >= 18
+- Chrome latest
+- Edge latest
+- Firefox latest
 
-Node.js >= 18  
-Chrome (latest)  
-Edge (latest)  
-Firefox (latest)
+Optional:
 
-Optional browser:
+- Safari
 
-可选浏览器测试：
+## 2. Setup and Run
 
-Safari
+From the project root:
 
----
-
-# 2. Setup and Run / 启动项目
-
-From the project root directory:
-
-在项目根目录运行：
-
-## Install dependencies / 安装依赖
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-## Start development server / 启动开发服务器
+### Start development server
 
 ```bash
 npm run dev
 ```
 
-Open the browser:
+Open:
 
-打开浏览器：
-
-```
+```text
 http://localhost:5173
 ```
 
 Verify:
 
-确认以下情况：
+- home page loads
+- tools page opens
+- no obvious browser console errors
 
-- Homepage loads correctly  
-  首页能正常加载
-- Tools page can be opened  
-  Tools 页面可以进入
-- No errors in browser console  
-  浏览器控制台没有错误
+## 3. Implemented Tool Coverage
 
----
+The current repository supports:
 
-# 3. Core Feature Tests / 核心功能测试
+- `markdown-to-pdf`
+- `txt-to-pdf`
+- `html-to-pdf`
+- `image-to-pdf`
+- `merge-pdf`
 
-These tests verify the main functionality of the toolkit.
+The current repository does not yet implement:
 
-这些测试用于验证核心功能是否正常。
+- `split-pdf`
+- `reorder-pdf`
+- `rotate-pdf`
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `crop-pdf`
 
----
+## 4. Content Tool Tests
 
-# 3.1 Markdown → PDF
+### 4.1 Markdown -> PDF
 
-## Steps / 测试步骤
+Steps:
 
-1. Open **Tools** page  
-   打开 Tools 页面
-
-2. Select **Markdown to PDF**  
-   选择 Markdown to PDF
-
-3. Enter the following content in the editor  
-   在编辑器输入以下内容
+1. Open the Tools page.
+2. Select the Content workspace.
+3. Select `Markdown to PDF`.
+4. Enter:
 
 ```markdown
 # Hello Markdown
@@ -110,210 +88,98 @@ This is **bold** text.
 - Item B
 ```
 
-4. Wait for preview update  
-   等待预览更新
+5. Wait for preview update.
+6. Click `Export PDF`.
 
-5. Click **Export PDF**  
-   点击 Export PDF
+Expected result:
 
-## Expected Result / 预期结果
+- preview shows heading, bold text, and list
+- PDF downloads successfully
 
-Preview shows:
+### 4.2 TXT -> PDF
 
-预览显示：
+Steps:
 
-- Heading
-- Bold text
-- Bullet list
+1. Select `TXT to PDF`.
+2. Enter:
 
-PDF should:
-
-PDF 应该：
-
-- download automatically  
-  自动下载
-- contain the formatted content  
-  包含正确格式内容
-
-Result:
-
-PASS / FAIL
-
----
-
-# 3.2 TXT → PDF
-
-## Steps / 测试步骤
-
-Switch tool to **TXT to PDF**.
-
-切换工具为 TXT to PDF。
-
-Enter:
-
-输入：
-
-```
+```text
 Hello TXT
 
 This is line one.
 This is line two.
 ```
 
-Wait for preview update.
+3. Wait for preview update.
+4. Click `Export PDF`.
 
-等待预览更新。
+Expected result:
 
-Click **Export PDF**.
+- preview shows plain text
+- PDF downloads successfully
 
-点击 Export PDF。
+### 4.3 HTML -> PDF
 
-## Expected Result / 预期结果
+Steps:
 
-Preview shows plain text.
-
-预览显示纯文本。
-
-PDF downloads correctly.
-
-PDF 成功下载。
-
-Result:
-
-PASS / FAIL
-
----
-
-# 3.3 HTML → PDF
-
-## Steps / 测试步骤
-
-Switch tool to **HTML to PDF**.
-
-切换工具为 HTML to PDF。
-
-Enter:
-
-输入：
+1. Select `HTML to PDF`.
+2. Enter:
 
 ```html
 <h1>Hello HTML</h1>
 <p>This is a paragraph.</p>
 <ul>
-<li>Apple</li>
-<li>Banana</li>
+  <li>Apple</li>
+  <li>Banana</li>
 </ul>
 ```
 
-Wait for preview update.
+3. Wait for preview update.
+4. Click `Export PDF`.
 
-等待预览更新。
+Expected result:
 
-Click **Export PDF**.
+- preview renders HTML elements
+- PDF downloads successfully
 
-点击 Export PDF。
+## 5. Content File Upload Tests
 
-## Expected Result / 预期结果
+### 5.1 Markdown file upload
 
-Preview renders HTML elements correctly.
-
-预览正确渲染 HTML：
-
-- heading
-- paragraph
-- list
-
-PDF export works.
-
-PDF 导出成功。
-
-Result:
-
-PASS / FAIL
-
----
-
-# 4. File Upload Tests / 文件上传测试
-
-These tests verify local file input.
-
-用于验证本地文件上传功能。
-
----
-
-# 4.1 Upload Markdown File / 上传 Markdown 文件
-
-Create file:
-
-创建文件：
-
-test.md
-
-Content:
+Create `test.md`:
 
 ```markdown
 # Markdown File Test
 This is a markdown file.
 ```
 
-Upload the file using:
+Upload with file selector or drag and drop.
 
-上传文件方式：
+Expected result:
 
-- Drag & Drop
-- File selector
+- tool switches to Markdown
+- editor content updates
+- preview updates
+- export works
 
-## Expected Result / 预期结果
+### 5.2 TXT file upload
 
-- Tool switches to Markdown tool  
-  自动切换到 Markdown 工具
-- Editor content updates  
-  编辑器内容更新
-- Preview renders correctly  
-  预览正常
-- Export works  
-  导出成功
+Create `test.txt`:
 
-Result:
-
-PASS / FAIL
-
----
-
-# 4.2 Upload TXT File / 上传 TXT 文件
-
-Create file:
-
-test.txt
-
-Content:
-
-```
+```text
 TXT test file
 Second line
 ```
 
 Expected result:
 
-预期结果：
+- tool switches to TXT
+- preview updates
+- export works
 
-- Tool switches to TXT
-- Preview works
-- Export works
+### 5.3 HTML file upload
 
-Result:
-
-PASS / FAIL
-
----
-
-# 4.3 Upload HTML File / 上传 HTML 文件
-
-Create file:
-
-test.html
-
-Content:
+Create `test.html`:
 
 ```html
 <h2>HTML Test</h2>
@@ -322,218 +188,118 @@ Content:
 
 Expected result:
 
-预期结果：
+- tool switches to HTML
+- preview renders HTML
+- export works
 
-- Tool switches to HTML
-- Preview renders HTML
-- Export works
+## 6. Image Tool Tests
 
-Result:
+### 6.1 Single image export
 
-PASS / FAIL
+Steps:
 
----
-
-# 5. Drag and Drop Test / 拖拽上传测试
-
-## Steps / 步骤
-
-Drag a `.md`, `.txt`, or `.html` file into the dropzone.
-
-将 `.md` `.txt` `.html` 文件拖入拖拽区域。
-
-## Expected Result / 预期结果
-
-- File loads successfully  
-  文件成功加载
-- Editor content updates  
-  编辑器内容更新
-- Preview updates  
-  预览更新
-
-Result:
-
-PASS / FAIL
-
----
-
-# 6. Validation Tests / 输入校验测试
-
-These tests verify validation logic.
-
-用于验证输入校验逻辑。
-
----
-
-# 6.1 Empty Editor Content / 编辑器为空
-
-## Steps
-
-Clear all editor content.
-
-清空编辑器内容。
-
-## Expected Result
-
-Preview error appears:
-
-预览提示错误：
-
-Preview requires non-empty content
-
-Export button disabled.
-
-Export 按钮被禁用。
-
-Result:
-
-PASS / FAIL
-
----
-
-# 6.2 Empty File Upload / 空文件上传
-
-Create empty file:
-
-empty.txt
-
-Upload the file.
-
-上传文件。
+1. Switch to the Images workspace.
+2. Select one PNG/JPG/JPEG/WEBP file.
+3. Wait for preview update.
+4. Click `Export PDF`.
 
 Expected result:
 
-The selected file is empty
+- image preview appears
+- a single-page PDF downloads successfully
 
-Result:
+### 6.2 Multi-image export
 
-PASS / FAIL
+Steps:
 
----
-
-# 6.3 Unsupported File Type / 不支持文件类型
-
-Upload:
-
-test.pdf
+1. Stay in the Images workspace.
+2. Select multiple supported image files.
+3. Wait for preview update.
+4. Click `Export PDF`.
 
 Expected result:
 
-Unsupported file type
+- file list updates
+- preview updates
+- a multi-page PDF downloads successfully
 
-Result:
+## 7. PDF Workspace Tests
 
-PASS / FAIL
+### 7.1 Merge PDF happy path
 
----
+Steps:
 
-# 7. Export Settings Tests / 导出设置测试
-
-Test settings panel.
-
-测试导出设置面板。
-
----
-
-# 7.1 Page Size / 页面尺寸
-
-Test both options:
-
-A4  
-Letter
+1. Switch to the `PDF Tools` workspace.
+2. Confirm the tool is `Merge PDF`.
+3. Select two or more PDF files.
+4. Wait for preview update.
+5. Click `Export PDF`.
 
 Expected result:
 
-PDF layout changes accordingly.
+- file status reports loaded PDF files
+- preview shows a merge summary with the selected file names
+- merged PDF downloads successfully
 
-PDF 页面尺寸发生变化。
+### 7.2 Merge PDF validation: single file
 
-Result:
+Steps:
 
-PASS / FAIL
-
----
-
-# 7.2 Orientation / 页面方向
-
-Test:
-
-Portrait  
-Landscape
+1. Switch to the `PDF Tools` workspace.
+2. Select exactly one PDF file.
 
 Expected result:
 
-PDF orientation updates correctly.
+- preview may validate input, but export remains disabled
+- UI indicates that at least two PDF files are required
 
-PDF 页面方向变化正确。
+### 7.3 Merge PDF validation: unsupported file
 
-Result:
+Steps:
 
-PASS / FAIL
-
----
-
-# 7.3 Margin / 页面边距
-
-Test margin values:
-
-0  
-12  
-40
+1. Switch to the `PDF Tools` workspace.
+2. Try selecting a non-PDF file.
 
 Expected result:
 
-PDF margin changes.
+- file error is shown
+- merge does not run
 
-PDF 边距变化。
+## 8. Validation and UI State Tests
 
-Result:
+### 8.1 Empty content validation
 
-PASS / FAIL
+Steps:
 
----
+1. Switch to the Content workspace.
+2. Clear all editor content.
 
-# 8. UI State Tests / UI 状态测试
+Expected result:
 
-Verify disabled states.
+- preview error appears
+- export is disabled
 
-验证 UI 禁用状态。
+### 8.2 Unsupported content file validation
 
----
+Steps:
 
-# 8.1 Export Disabled During Preview
+1. In the Content workspace, upload `test.pdf`.
 
-Edit content quickly.
+Expected result:
 
-快速编辑内容。
+- unsupported file type message appears
 
-Expected message:
+### 8.3 Export disabled during preview
 
-Wait for preview update before exporting
+Steps:
 
-Result:
+1. In the Content workspace, edit content quickly.
 
-PASS / FAIL
+Expected result:
 
----
+- export is temporarily disabled while preview updates
 
-# 8.2 Export Disabled When Empty
-
-Clear editor content.
-
-清空编辑器。
-
-Expected message:
-
-Add content before exporting
-
-Result:
-
-PASS / FAIL
-
----
-
-# 9. Build Test / 构建测试
+## 9. Build Test
 
 Run:
 
@@ -541,18 +307,12 @@ Run:
 npm run build
 ```
 
-Expected:
+Expected result:
 
-- Build completes successfully  
-- No errors
+- build completes successfully
+- no blocking TypeScript or Vite errors
 
-Result:
-
-PASS / FAIL
-
----
-
-# 10. Production Preview Test / 生产环境预览测试
+## 10. Production Preview Test
 
 Run:
 
@@ -562,87 +322,73 @@ npm run preview
 
 Open:
 
+```text
 http://localhost:4173
-
-Verify:
-
-- Tools page works
-- Preview works
-- Export works
-
-Result:
-
-PASS / FAIL
-
----
-
-# 11. Browser Console Check / 浏览器控制台检查
-
-Open developer tools:
-
-F12 → Console
-
-Verify:
-
-- No runtime errors
-- No unhandled exceptions
-
-Result:
-
-PASS / FAIL
-
----
-
-# 12. Final Test Checklist / 最终测试清单
-
 ```
+
+Verify:
+
+- Content workspace works
+- Images workspace works
+- PDF Tools workspace works
+- export/download flows still work
+
+## 11. Browser Console Check
+
+Open developer tools and verify:
+
+- no obvious runtime errors
+- no unhandled exceptions during normal flows
+
+## 12. Final Checklist
+
+```text
 [ P ] Dev server runs
 [ P ] Markdown preview works
 [ P ] Markdown export works
 [ P ] TXT export works
 [ P ] HTML export works
-[ P ] Markdown file upload works
-[ P ] TXT file upload works
-[ P ] HTML file upload works
-[ P ] Drag-and-drop works
+[ P ] Content file upload works
+[ P ] Drag-and-drop works for content/image flows
+[ P ] Single-image export works
+[ P ] Multi-image export works
+[ P ] Merge PDF works
+[ P ] Merge PDF single-file validation works
+[ P ] Merge PDF unsupported-file validation works
 [ P ] Empty content validation works
-[ P ] Empty file validation works
-[ P ] Unsupported file validation works
-[ P ] Export settings affect PDF
+[ P ] Export settings affect content/image PDF output
 [ P ] Build succeeds
 [ P ] Production preview works
 [ P ] Browser console check
 ```
 
----
-
-# 13. Issue Reporting / 问题报告
+## 13. Issue Reporting
 
 If a test fails, record:
 
-如果测试失败，请记录：
-
-Test name  
-Browser  
-Error message  
-Console output  
-Steps to reproduce
+- test name
+- browser
+- error message
+- console output
+- steps to reproduce
 
 Example:
 
-Test: HTML Export  
-Browser: Chrome  
-Error: Preview not rendered  
-Console: DOMPurify error
+```text
+Test: Merge PDF
+Browser: Chrome
+Error: Failed to merge PDF files in the browser
+Console: <error output>
+```
 
----
+## 14. Version Tested
 
-# 14. Version Tested / 当前测试版本
+Version: Phase 10.1
 
-Version: Phase 8
+Implemented tools:
 
-Tools implemented:
-
-- markdown-to-pdf
-- txt-to-pdf
-- html-to-pdf
+- `markdown-to-pdf`
+- `txt-to-pdf`
+- `html-to-pdf`
+- `image-to-pdf`
+- `merge-pdf`

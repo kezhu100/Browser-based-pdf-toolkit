@@ -1,389 +1,383 @@
-# Browser-based PDF Toolkit — Project Context
+﻿# Browser-based PDF Toolkit - Project Context
 
 This file is the primary context for AI assistants working on this repository.
 
 AI agents should also read:
 
-- AGENTS.md
-- docs/architecture.md
-- docs/implemented-phases.md
-- docs/codex_prompt_chain.md
+- `AGENTS.md`
+- `docs/architecture.md`
+- `docs/implemented-phases.md`
+- `docs/codex_prompt_chain.md`
 
-1 Project Overview
+## 1. Project Overview
 
-Browser-based PDF Toolkit 是一个 纯浏览器端 PDF 工具网站。
+Browser-based PDF Toolkit is a browser-only PDF toolkit website.
 
-核心目标：
+Core goals:
 
-不上传文件
+- no server upload
+- no backend services
+- all processing runs locally in the browser
+- privacy-friendly behavior
+- static hosting with zero operational backend cost
 
-不需要服务器
+Live demo:
 
-所有处理在浏览器完成
+- https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 
-保护用户隐私
+Deployment target:
 
-零后端成本部署
+- GitHub Pages
 
-当前在线版本：
+## 2. Tech Stack
 
-https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
+Frontend stack:
 
-部署平台：
+- React
+- TypeScript
+- Vite
+- React Router
+- html2canvas / html2pdf.js
+- pdf-lib
 
-GitHub Pages
-2 Tech Stack
+Deployment:
 
-前端技术栈：
+- GitHub Pages
+- GitHub Actions
 
-React
-TypeScript
-Vite
-React Router
-html2canvas
+Local development:
 
-部署：
+- Node.js
+- npm
+- Vite dev server
 
-GitHub Pages
-GitHub Actions (auto deploy)
+## 3. Project Architecture
 
-开发环境：
+The project uses a Tool Plugin Architecture.
 
-Node.js
-npm
-Vite dev server
-3 Project Architecture
+Main structure:
 
-项目采用 插件式工具架构 (Tool Plugin Architecture)。
+```text
+src/
+  app/
+  components/
+    content-tools/
+    image-tools/
+    pdf-tools/
+    workspaces/
+  pdf-engine/
+    adapters/
+  pipeline/
+  preview-engine/
+  tools/
+    plugins/
+    registry.ts
+  state/
+  types/
+  utils/
+```
 
-整体结构：
+Primary flows:
 
-src
-│
-├─ app
-│   ├─ router.tsx
-│   ├─ AppShell.tsx
-│   └─ pages
-│
-├─ components
-│   └─ content-tools
-│
-├─ pipeline
-│
-├─ pdf-engine
-│
-├─ preview-engine
-│
-├─ tools
-│   ├─ plugins
-│   └─ registry.ts
-│
-├─ state
-│
-├─ types
-│
-└─ utils
+Content/image conversion flow:
 
-架构流程：
-
+```text
 Input Document
-     ↓
-Document Pipeline
-     ↓
-Document Model
-     ↓
-Preview Engine
-     ↓
-PDF Engine
-     ↓
-Download
-4 Tool Plugin System
+  -> Document Pipeline
+  -> Standard Document Model
+  -> Preview Engine
+  -> PDF Engine
+  -> Browser Download
+```
 
-每个工具是一个 ToolPlugin：
+PDF manipulation flow:
 
-示例：
+```text
+PDF Source Files
+  -> ToolPlugin.run()
+  -> UnifiedPdfEngine manipulation method
+  -> Browser Download
+```
 
-markdownToPdfTool
-txtToPdfTool
-htmlToPdfTool
+Important rule:
 
-注册位置：
+- content and image tools use the existing `DocumentPipeline`
+- PDF manipulation tools extend the `pdf-engine` path instead of forcing PDF binaries into `DocumentPipeline`
 
-src/tools/registry.ts
+## 4. Tool Plugin System
 
-工具执行流程：
+Each tool is a `ToolPlugin`.
 
+Current implemented examples:
+
+- `markdown-to-pdf`
+- `txt-to-pdf`
+- `html-to-pdf`
+- `image-to-pdf`
+- `merge-pdf`
+
+Tool registry:
+
+- `src/tools/registry.ts`
+
+Tool execution pattern:
+
+```text
 ToolPlugin.run()
-      ↓
-DocumentPipeline
-      ↓
-PreviewRenderer
-      ↓
-UnifiedPdfEngine
-5 Current Features (MVP)
+  -> runtime services
+  -> preview and/or PDF engine work
+  -> artifact/output for browser download
+```
 
-已完成：
+## 5. Current Implemented Features
 
-Content → PDF
-Markdown → PDF
-TXT → PDF
-HTML → PDF
-UI
-Editor
-Preview
-Export
-File Upload
-Tool Selection
-PDF Export
-Page size
-Orientation
-Margin
-Download
-Preview
-Live preview
-HTML rendering
-6 Deployment Architecture
+Implemented:
 
-网站部署方式：
+- Content -> PDF
+  - Markdown -> PDF
+  - TXT -> PDF
+  - HTML -> PDF
+- Image -> PDF
+  - PNG
+  - JPG
+  - JPEG
+  - WEBP
+- PDF tools workspace
+  - Merge PDF
 
-GitHub Pages
+Current UI/workspace behavior:
 
-路由方案：
+- content workspace
+- image workspace
+- pdf workspace
+- auto preview
+- explicit export/apply action
+- local file input
+- browser download
 
-HashRouter
+Important limitation:
 
-示例：
+- `merge-pdf` is the only implemented PDF manipulation tool so far
+- `split-pdf`, `reorder-pdf`, `rotate-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `crop-pdf` remain unimplemented placeholders
 
-#/tools
+## 6. Deployment Architecture
 
-原因：
+Site deployment:
 
-GitHub Pages 是静态托管
-BrowserRouter 会导致刷新404
-HashRouter 更稳定
-7 Build & Deployment
+- GitHub Pages
 
-本地开发：
+Routing strategy:
 
+- `HashRouter`
+
+Example:
+
+- `#/tools`
+
+Reason:
+
+- GitHub Pages is static hosting
+- `BrowserRouter` would require server fallback handling
+- `HashRouter` is compatible with static deployment
+
+## 7. Build and Deployment
+
+Local development:
+
+```bash
 npm install
 npm run dev
+```
 
-构建：
+Build:
 
+```bash
 npm run build
+```
 
-自动部署：
+Auto deployment:
 
+```text
 git push
-↓
-GitHub Actions
-↓
-npm install
-npm run build
-↓
-deploy to GitHub Pages
+  -> GitHub Actions
+  -> npm install
+  -> npm run build
+  -> deploy to GitHub Pages
+```
 
-Workflow：
+Workflow:
 
-.github/workflows/deploy-pages.yml
-8 Key Problems Encountered
-Problem 1
+- `.github/workflows/deploy-pages.yml`
 
-TypeScript build errors
+## 8. Key Problems Encountered
 
-原因：
+Problem 1:
 
-ToolPlugin generic types mismatch
-registry typing mismatch
+- TypeScript build errors from plugin generic typing and registry typing
 
-解决：
+Resolution:
 
-introduce AnyToolPlugin
-narrow ContentToolPlugin
-Problem 2
+- introduced `AnyToolPlugin`
+- narrowed tool-specific plugin types where needed
 
-Vite build succeeded but GitHub Pages failed
+Problem 2:
 
-原因：
+- Vite build succeeded but GitHub Pages failed
 
-base path mismatch
-repo name case mismatch
+Resolution:
 
-解决：
+- fixed Vite base path
+- corrected repo-name path usage
 
-vite.config.ts base fix
-Problem 3
+Problem 3:
 
-React Router 404 on GitHub Pages
+- React Router 404 on GitHub Pages
 
-原因：
+Resolution:
 
-BrowserRouter requires server fallback
-GitHub Pages is static
+- switched to `HashRouter`
 
-解决：
+Problem 4:
 
-switch to HashRouter
-Problem 4
+- blank page after deploy due to asset path mismatch
 
-Blank page after deploy
+Resolution:
 
-原因：
+- corrected base path and rebuilt
 
-assets path mismatch
+Problem 5:
 
-解决：
+- browser-side PDF merge required a real manipulation library
 
-correct base path
-rebuild and redeploy
-9 Current Status
+Resolution:
 
-当前项目已经：
+- integrated `pdf-lib` through the `pdf-engine` layer for Phase 10.1 merge support
 
-Local dev working
-Build successful
-GitHub Pages deployed
-HashRouter working
-Auto deploy enabled
-README bilingual
+## 9. Current Status
 
-在线 Demo：
+Current status:
 
-https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
-10 Future Roadmap
-Phase 1 (Completed)
+- local dev working
+- production build working
+- GitHub Pages deployed
+- `HashRouter` working
+- auto deploy enabled
+- content/image workspaces working
+- pdf workspace added
+- merge-pdf working in browser
 
-Content → PDF
+Online demo:
 
-Markdown
-TXT
-HTML
-Phase 2
+- https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 
-Image → PDF
+## 10. Roadmap
 
-PNG
-JPG
-Phase 3
+Completed:
 
-PDF Operations
+- Phase 1 - project skeleton
+- Phase 2 - shared types and interfaces
+- Phase 3 - content conversion pipeline
+- Phase 4 - UI integration
+- Phase 5 - preview/export separation
+- Phase 6 - file upload and debounce improvements
+- Phase 7 - UX and export settings improvements
+- Phase 8 - release hardening
+- Phase 9 - image to PDF
+- Phase 9.1 - image flow stabilization
+- Phase 9.5 - workspace router + lazy loading cleanup
+- Phase 10.1 - merge PDF
 
-Merge PDF
-Split PDF
-Phase 4
+Next likely steps:
 
-Page Operations
+- Phase 10.2 - more PDF manipulation tools
+  - split PDF
+  - rotate pages
+- Phase 10.3 - page-order operations
+  - reorder pages
+  - delete pages
+- later document enhancement
+  - watermark
+  - page numbers
 
-Reorder pages
-Delete pages
-Rotate pages
-Phase 5
+## 11. Codex Prompt Template
 
-Document Enhancement
+Recommended prompt structure:
 
-Watermark
-Page numbers
-Phase 6
-
-Optimization
-
-Bundle splitting
-Dynamic imports
-Reduce JS size
-Phase 7
-
-UX Improvements
-
-Drag & Drop
-Better preview
-Tooltips
-11 Codex Prompt Template
-
-推荐给 Codex 的 Prompt 模板：
-
-You are modifying a Vite + React + TypeScript project.
-
-Repository:
-<repo-url>
-
-Goals:
-<task description>
+```text
+You are modifying an existing Vite + React + TypeScript repository.
 
 Constraints:
-
 1. Do not refactor unrelated architecture
-2. Keep existing ToolPlugin system
+2. Keep the ToolPlugin system
 3. Keep browser-only processing
-4. Do not introduce backend services
+4. Keep GitHub Pages compatibility
+5. Extend the existing pdf-engine path for PDF manipulation tools
 
 Tasks:
-
 1. implement feature X
 2. modify file Y
 
 Output:
-
-Show updated files only
+Show changed files only
 Explain changes briefly
-12 Deployment Constraints
+```
 
-项目必须保持：
+## 12. Deployment Constraints
 
-Browser-only
-No backend
-No file upload to server
+The project must remain:
 
-原因：
+- browser-only
+- no backend
+- no file upload to server
+- GitHub Pages compatible
 
-privacy
-zero cost hosting
-GitHub Pages compatibility
-13 Important Config
-vite.config.ts
-base: "/Browser-based-pdf-toolkit/"
-Router
-createHashRouter
-Deploy
-GitHub Actions
-14 Project Goal
+Reasons:
 
-最终目标：
+- privacy
+- zero-cost hosting
+- static-site compatibility
 
-构建一个：
+## 13. Important Config
 
-browser-only PDF toolkit
+Vite:
 
-类似：
+- `vite.config.ts`
+- `base: "/Browser-based-pdf-toolkit/"`
 
-ilovepdf
-smallpdf
+Router:
 
-但：
+- `HashRouter`
 
-no backend
-privacy friendly
-open source
-15 How to Continue Development
+Deploy:
 
-开发新功能时：
+- GitHub Actions
 
-1 新建 ToolPlugin
+## 14. Project Goal
 
-src/tools/plugins
+Final goal:
 
-2 注册工具
+- build a browser-only PDF toolkit
+- similar in product direction to ilovepdf / smallpdf
+- but without backend processing
+- privacy-friendly
+- open source
 
-registry.ts
+## 15. How to Continue Development
 
-3 UI integration
+When adding a new feature:
 
-ToolSelectionPanel
-ContentToolsWorkspace
-16 Notes for Future AI Sessions
+1. add or extend a `ToolPlugin` under `src/tools/plugins`
+2. register the tool in `src/tools/registry.ts`
+3. integrate it through the appropriate workspace
+4. reuse `src/pdf-engine` and `src/pipeline` instead of bypassing them
 
-新 AI / Codex 必须知道：
+## 16. Notes for Future AI Sessions
 
-ToolPlugin architecture
-Browser-only constraint
-HashRouter for GitHub Pages
-GitHub Actions deploy
+Future AI sessions must keep in mind:
+
+- ToolPlugin architecture is the core contract
+- browser-only is a hard constraint
+- `HashRouter` is required for GitHub Pages
+- content/image tools use `DocumentPipeline`
+- PDF manipulation tools should extend the `pdf-engine` path
+- only `merge-pdf` is implemented for PDF manipulation at the current state

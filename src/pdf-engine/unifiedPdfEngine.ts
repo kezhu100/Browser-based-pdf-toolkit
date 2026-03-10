@@ -12,6 +12,7 @@ import type {
 import type { Result } from "../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
+import { mergePdfFiles } from "./adapters/pdfEditAdapter";
 
 function notImplemented<T>(message: string): Result<T> {
   return {
@@ -25,8 +26,8 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
 
   generateFromModel = this.renderEngine.generateFromModel.bind(this.renderEngine);
 
-  async merge(_: MergePdfRequest): Promise<Result<PdfOperationResult>> {
-    return notImplemented("Merge PDF is not implemented in Phase 3.");
+  async merge(request: MergePdfRequest): Promise<Result<PdfOperationResult>> {
+    return mergePdfFiles(request);
   }
 
   async split(_: SplitPdfRequest): Promise<Result<PdfSplitResult>> {
@@ -53,4 +54,3 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return notImplemented("Crop PDF is not implemented in Phase 3.");
   }
 }
-

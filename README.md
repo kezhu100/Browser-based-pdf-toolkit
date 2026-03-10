@@ -1,101 +1,176 @@
-# Browser-based PDF Toolkit
+﻿# Browser-based PDF Toolkit / 浏览器端 PDF 工具箱
 
-A browser-only PDF conversion tool focused on privacy, zero backend cost, and simple usability.(Fully developed by AI, I have zero experience in front-end development and no any manual code.)
+A browser-only PDF toolkit focused on privacy, zero backend cost, and simple usability.  
+一个专注于隐私保护、零后端成本和易用性的纯浏览器端 PDF 工具箱。
 
-一个纯浏览器端 PDF 转换工具，强调隐私保护、零后端成本与易用性。(纯ai打造，本人零前端经验，无任何手工代码)
+This project is fully frontend and designed for static deployment. All processing runs locally in the browser.  
+本项目完全基于前端实现，面向静态部署设计，所有处理均在浏览器本地完成。
 
-## Live Demo
+This project was entirely completed by Codex,including designing the architecture and writing the code. I have no front-end experience at all.
+这个项目完全是由 Codex 完成的，包括设计架构和编写代码。而我完全没有前端开发的经验。
+
+## Live Demo / 在线演示
 
 https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 
-## Screenshot
+## Screenshot / 项目截图
 
 ![Browser-based PDF Toolkit Screenshot](docs/screenshot.png)
 
-## Features / 功能
+## Current Features / 当前功能
 
-English:
+### Implemented tools / 已实现工具
+
 - Markdown -> PDF
 - TXT -> PDF
 - HTML -> PDF
-- Live preview
-- Browser-only processing (privacy-friendly)
+- Image -> PDF
+- Merge PDF
 
-中文：
 - Markdown 转 PDF
 - TXT 转 PDF
 - HTML 转 PDF
-- 实时预览
-- 浏览器本地处理（保护隐私）
+- 图片转 PDF
+- PDF 合并
+
+### Implemented workspace families / 已实现工作区类型
+
+- Content workspace
+- Image workspace
+- PDF workspace
+
+- 内容工作区
+- 图片工作区
+- PDF 工作区
+
+### Behavior / 功能特点
+
+- browser-only processing
+- no backend
+- no server upload
+- automatic preview
+- explicit export/apply action
+- local browser download
+
+- 纯浏览器端处理
+- 无后端服务
+- 不上传文件到服务器
+- 自动预览
+- 手动导出 / 执行操作
+- 浏览器本地下载结果
+
+## Current PDF Manipulation Status / 当前 PDF 编辑功能状态
+
+### Implemented / 已实现
+
+- `merge-pdf`
+
+### Not implemented yet / 尚未实现
+
+- `split-pdf`
+- `reorder-pdf`
+- `rotate-pdf`
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `crop-pdf`
 
 ## Tech Stack / 技术栈
 
 - React
 - TypeScript
 - Vite
+- React Router
+- html2pdf.js
+- pdf-lib
+- DOMPurify
+- marked
+- Zustand
+## Local Development
 
-## Local Development / 本地开发
-
-English:
 ```bash
 npm install
 npm run dev
 ```
 
-中文：
-安装依赖并启动开发服务器。
+Open:
 
-## Build / 构建
+```text
+http://localhost:5173
+```
+
+## Build
 
 ```bash
 npm run build
 ```
 
-## Deploy / 部署
+## Deploy
 
-Deployment is automated with GitHub Actions.  
+Deployment is automated with GitHub Actions.
+
 Every push to the `main` branch triggers build and deploy to GitHub Pages.
 
-项目通过 GitHub Actions 自动部署。  
-每次推送到 `main` 分支后会自动构建并发布到 GitHub Pages。
+Important deployment constraints:
 
-## Roadmap / 未来计划
+- static hosting only
+- `HashRouter` compatibility
+- no backend server
 
-- Image -> PDF
-- Merge / Split PDF
-- Page reordering
-- Watermark / page numbers
+## Latest Capabilities
 
-## Latest Capabilities / 最新能力
+### Content tools
 
-English:
-- Supported tools:
-  - Markdown -> PDF
-  - TXT -> PDF
-  - HTML -> PDF
-  - Image -> PDF
-- Image tool:
-  - PNG / JPG / JPEG / WEBP support
-  - single image -> single-page PDF
-  - multiple images -> multi-page PDF
-  - drag and drop upload
-  - local browser processing (no server upload)
-- Architecture update (Phase 9.5):
-  - workspace router layer for workspace-family resolution
-  - lazy loading for content/image workspaces via `React.lazy` + `Suspense`
+- Markdown/TXT/HTML input
+- local file upload
+- live preview
+- export settings:
+  - page size
+  - orientation
+  - margin
 
-中文：
-- 已支持工具：
-  - Markdown -> PDF
-  - TXT -> PDF
-  - HTML -> PDF
-  - Image -> PDF
-- 图片工具能力：
-  - 支持 PNG / JPG / JPEG / WEBP
-  - 单图 -> 单页 PDF
-  - 多图 -> 多页 PDF
-  - 支持拖拽上传
-  - 全流程浏览器本地处理（不上传服务器）
-- 架构更新（Phase 9.5）：
-  - 新增 workspace router 层用于工作区家族路由
-  - content/image 工作区采用 `React.lazy` + `Suspense` 懒加载
+### Image tools
+
+- PNG / JPG / JPEG / WEBP support
+- single image -> single-page PDF
+- multiple images -> multi-page PDF
+- local browser processing
+
+### PDF tools
+
+- Merge multiple PDF files in browser
+- multiple PDF file selection
+- local file validation
+- lightweight merge summary preview
+- merged PDF download
+
+## Architecture Notes
+
+- keeps the existing ToolPlugin system
+- content/image tools use the document pipeline
+- PDF manipulation tools extend the `pdf-engine` path
+- workspace routing is handled through a workspace-family router
+
+## Roadmap
+
+Completed:
+
+- content -> PDF
+- image -> PDF
+- merge PDF
+
+Planned next:
+
+- split PDF
+- rotate PDF
+- reorder/delete page workflows
+- watermark and page numbers
+
+## Constraints
+
+This project must remain:
+
+- browser-only
+- privacy-friendly
+- GitHub Pages deployable
+- no backend
+- no cloud file processing
