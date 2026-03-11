@@ -148,6 +148,12 @@ Important deployment constraints:
 - lightweight operation summary preview
 - browser download for merged, split, or rotated results
 
+Small Phase 10.2 polish:
+
+- improved PDF workspace status wording and merge -> split/rotate switching behavior
+- clarified split-pdf limitations for large or many-page PDFs
+- included a small PDF adapter memory optimization without changing features
+
 ## Architecture Notes
 
 - keeps the existing ToolPlugin system

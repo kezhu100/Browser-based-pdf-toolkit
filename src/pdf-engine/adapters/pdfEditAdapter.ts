@@ -28,11 +28,7 @@ export async function mergePdfFiles(request: MergePdfRequest): Promise<Result<Pd
     }
 
     const mergedBytes = await merged.save();
-    const arrayBuffer = mergedBytes.buffer.slice(
-      mergedBytes.byteOffset,
-      mergedBytes.byteOffset + mergedBytes.byteLength
-    ) as ArrayBuffer;
-    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    const blob = new Blob([toPdfBlobPart(mergedBytes)], { type: "application/pdf" });
 
     return {
       ok: true,
@@ -87,10 +83,9 @@ export async function splitPdfFile(request: SplitPdfRequest): Promise<Result<Pdf
       splitDocument.addPage(page);
 
       const bytes = await splitDocument.save();
-      const arrayBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
 
       files.push({
-        blob: new Blob([arrayBuffer], { type: "application/pdf" }),
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
         fileName: `${ensurePdfFileStem(request.fileNamePrefix)}-page-${pageIndex + 1}.pdf`,
         mimeType: "application/pdf"
       });
@@ -157,12 +152,11 @@ export async function rotatePdfFile(request: RotatePdfRequest): Promise<Result<P
     }
 
     const bytes = await document.save();
-    const arrayBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
 
     return {
       ok: true,
       data: {
-        blob: new Blob([arrayBuffer], { type: "application/pdf" }),
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
         fileName: ensurePdfFileName(request.fileName),
         mimeType: "application/pdf"
       }
@@ -195,4 +189,12 @@ function ensurePdfFileStem(fileName: string): string {
   }
 
   return trimmed.toLowerCase().endsWith(".pdf") ? trimmed.slice(0, -4) : trimmed;
+}
+
+function toPdfBlobPart(bytes: Uint8Array): ArrayBuffer {
+  if (bytes.buffer instanceof ArrayBuffer && bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength) {
+    return bytes.buffer;
+  }
+
+  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
 }

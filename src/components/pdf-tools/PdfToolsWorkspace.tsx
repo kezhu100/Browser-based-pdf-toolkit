@@ -143,11 +143,23 @@ export function PdfToolsWorkspace() {
   }
 
   function handleSelectTool(toolId: PdfToolId) {
+    const nextItems =
+      toolId === "merge-pdf" || pdfItems.length <= 1
+        ? pdfItems
+        : [pdfItems[0]];
+
     setActiveTool(toolId);
+    setPdfItems(nextItems);
     setPreviewHtml("");
     setPreviewError(null);
     setExportError(null);
     setExportSuccess(null);
+    setFileError(null);
+    setFileStatus(
+      toolId !== "merge-pdf" && pdfItems.length > 1
+        ? `Kept the first PDF file for ${toolId === "split-pdf" ? "split" : "rotate"}.`
+        : null
+    );
   }
 
   async function handleExport() {

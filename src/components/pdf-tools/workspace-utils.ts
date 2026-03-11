@@ -1,5 +1,15 @@
 import type { PdfFileItem, PdfToolId } from "./types";
 
+function getPdfToolActionLabel(toolId: PdfToolId): string {
+  if (toolId === "merge-pdf") {
+    return "Merge";
+  }
+  if (toolId === "split-pdf") {
+    return "Split";
+  }
+  return "Rotate";
+}
+
 export function getPdfExportDisabledReason(params: {
   toolId: PdfToolId;
   files: PdfFileItem[];
@@ -8,7 +18,7 @@ export function getPdfExportDisabledReason(params: {
   exportLoading: boolean;
 }): string | null {
   if (params.exportLoading) {
-    return "Merge is already running.";
+    return `${getPdfToolActionLabel(params.toolId)} is already running.`;
   }
   if (params.files.length === 0) {
     return "Add PDF files before running this tool.";

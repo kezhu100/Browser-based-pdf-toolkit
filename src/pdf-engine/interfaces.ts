@@ -20,6 +20,7 @@ export interface MergePdfRequest {
 
 export interface SplitPdfRequest {
   file: PdfBinary;
+  // Phase 10.2 keeps a minimal split workflow and does not parse custom ranges yet.
   ranges: string;
   fileNamePrefix: string;
 }

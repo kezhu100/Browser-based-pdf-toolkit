@@ -34,6 +34,7 @@ async function run(context: ToolExecutionContext<SplitPdfToolRunSettings>): Prom
 
   const pdfResult = await context.services.pdfEngine.split({
     file: fileResult.data,
+    // Phase 10.2 only supports splitting into individual pages.
     ranges: "single-pages",
     fileNamePrefix: context.exportOptions.fileName
   });

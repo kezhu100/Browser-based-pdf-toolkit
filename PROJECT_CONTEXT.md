@@ -271,6 +271,7 @@ Current status:
 - merge-pdf working in browser
 - split-pdf working in browser
 - rotate-pdf working in browser
+- Phase 10.2 polish pass applied for workspace UX wording, single-file tool switching, and small PDF adapter memory cleanup
 
 Online demo:
 

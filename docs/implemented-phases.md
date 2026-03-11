@@ -120,6 +120,14 @@ Still not implemented:
 - Reused the existing `pdf-engine` adapter path instead of pushing PDF binaries through the document pipeline
 - Extended the PDF workspace validation, preview summary, and export handling for these tools
 
+### Phase 10.2 polish pass
+
+- Improved PDF workspace UX for tool-specific running-state feedback
+- Normalized merge -> split/rotate tool switching so single-file tools keep one predictable PDF input
+- Clarified split-pdf limitations for large or many-page PDFs
+- Documented that `SplitPdfRequest.ranges` is reserved for future use and not parsed in Phase 10.2
+- Reduced unnecessary PDF adapter buffer copying where safe without changing the export flow
+
 ### Current limitation after Phase 10.2
 
 Implemented PDF manipulation tools:

@@ -17,7 +17,10 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
     <section className="panel">
       <h3>Tool Settings</h3>
       {toolId === "split-pdf" ? (
-        <p className="subtle">Phase 10.2 uses the minimal split workflow: one uploaded PDF becomes one PDF per page.</p>
+        <>
+          <p className="subtle">Phase 10.2 uses the minimal split workflow: one uploaded PDF becomes one PDF per page.</p>
+          <p className="subtle">Large PDFs or PDFs with many pages may trigger many browser downloads and higher memory usage.</p>
+        </>
       ) : (
         <div className="settings-grid">
           <label className="field">
