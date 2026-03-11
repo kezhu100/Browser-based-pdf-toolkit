@@ -104,3 +104,33 @@ Still not implemented:
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `crop-pdf`
+
+## Phase 10.2 - Additional PDF Manipulation Tools
+
+- Kept the existing PDF workspace and `ToolPlugin` architecture
+- Implemented `split-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - split it into separate single-page PDF files
+  - download one file per page
+- Implemented `rotate-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - choose 90 / 180 / 270 degrees
+  - rotate all pages in browser using `pdf-lib`
+- Extended `UnifiedPdfEngine` with working `split()` and `rotate()` methods
+- Reused the existing `pdf-engine` adapter path instead of pushing PDF binaries through the document pipeline
+- Extended the PDF workspace validation, preview summary, and export handling for these tools
+
+### Current limitation after Phase 10.2
+
+Implemented PDF manipulation tools:
+
+- `merge-pdf`
+- `split-pdf`
+- `rotate-pdf`
+
+Still not implemented:
+
+- `reorder-pdf`
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `crop-pdf`

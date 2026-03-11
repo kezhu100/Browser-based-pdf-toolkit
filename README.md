@@ -26,12 +26,16 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - HTML -> PDF
 - Image -> PDF
 - Merge PDF
+- Split PDF
+- Rotate PDF
 
 - Markdown 转 PDF
 - TXT 转 PDF
 - HTML 转 PDF
 - 图片转 PDF
 - PDF 合并
+- PDF 拆分
+- PDF 旋转
 
 ### Implemented workspace families / 已实现工作区类型
 
@@ -64,12 +68,12 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 ### Implemented / 已实现
 
 - `merge-pdf`
+- `split-pdf`
+- `rotate-pdf`
 
 ### Not implemented yet / 尚未实现
 
-- `split-pdf`
 - `reorder-pdf`
-- `rotate-pdf`
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `crop-pdf`
@@ -138,10 +142,11 @@ Important deployment constraints:
 ### PDF tools
 
 - Merge multiple PDF files in browser
-- multiple PDF file selection
+- Split one PDF into separate single-page PDFs
+- Rotate one PDF by 90 / 180 / 270 degrees
 - local file validation
-- lightweight merge summary preview
-- merged PDF download
+- lightweight operation summary preview
+- browser download for merged, split, or rotated results
 
 ## Architecture Notes
 
@@ -157,11 +162,11 @@ Completed:
 - content -> PDF
 - image -> PDF
 - merge PDF
+- split PDF
+- rotate PDF
 
 Planned next:
 
-- split PDF
-- rotate PDF
 - reorder/delete page workflows
 - watermark and page numbers
 

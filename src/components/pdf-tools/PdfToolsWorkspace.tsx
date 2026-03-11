@@ -5,13 +5,14 @@ import { toolRegistryById } from "../../tools/registry";
 import { downloadBlob } from "../../utils/download";
 import { ExportPanel } from "../content-tools/ExportPanel";
 import { StatusPanel } from "../content-tools/StatusPanel";
-import { PDF_TOOL_IDS, getUnsupportedPdfFiles, toPdfFileItems } from "./config";
+import { PDF_TOOL_IDS, getPdfExportFileName, getPdfFileInputHint, getUnsupportedPdfFiles, toPdfFileItems } from "./config";
 import { PdfFileInputPanel } from "./PdfFileInputPanel";
 import { PdfFileListPanel } from "./PdfFileListPanel";
 import { PdfPreviewPanel } from "./PdfPreviewPanel";
+import { PdfToolSettingsPanel } from "./PdfToolSettingsPanel";
 import { PdfToolSelectionPanel } from "./PdfToolSelectionPanel";
 import type { PdfFileItem, PdfToolId, PdfToolPlugin } from "./types";
-import { getMergeExportDisabledReason } from "./workspace-utils";
+import { getPdfExportDisabledReason } from "./workspace-utils";
 
 function isPdfToolPlugin(tool: unknown): tool is PdfToolPlugin {
   if (!tool || typeof tool !== "object") {
@@ -45,6 +46,7 @@ export function PdfToolsWorkspace() {
   const [fileStatus, setFileStatus] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
+  const [rotateDegrees, setRotateDegrees] = useState<90 | 180 | 270>(90);
 
   useEffect(() => {
     if (activeToolIdInStore !== activeToolId) {
@@ -67,11 +69,9 @@ export function PdfToolsWorkspace() {
 
       const result = await activeTool.run({
         sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-        settings: {
-          generatePdf: false
-        },
+        settings: buildPdfToolSettings(activeTool.id, false, rotateDegrees),
         exportOptions: {
-          fileName: "merged.pdf",
+          fileName: getPdfExportFileName(activeTool.id),
           pageSize: "A4",
           orientation: "portrait",
           marginMm: 12
@@ -101,7 +101,7 @@ export function PdfToolsWorkspace() {
     return () => {
       cancelled = true;
     };
-  }, [activeTool, pdfItems, runtimeServices]);
+  }, [activeTool, pdfItems, rotateDegrees, runtimeServices]);
 
   if (pdfTools.length === 0) {
     return <p>PDF tool registry is not configured correctly.</p>;
@@ -157,11 +157,9 @@ export function PdfToolsWorkspace() {
 
     const result = await activeTool.run({
       sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-      settings: {
-        generatePdf: true
-      },
+      settings: buildPdfToolSettings(activeTool.id, true, rotateDegrees),
       exportOptions: {
-        fileName: `merged-${Date.now()}.pdf`,
+        fileName: getPdfExportFileName(activeTool.id),
         pageSize: "A4",
         orientation: "portrait",
         marginMm: 12
@@ -180,11 +178,14 @@ export function PdfToolsWorkspace() {
     setPreviewHtml(preview);
 
     const output = artifact.output;
-    if (output && !Array.isArray(output)) {
+    if (output && Array.isArray(output)) {
+      output.forEach((file) => downloadBlob(file.blob, file.fileName));
+      setExportSuccess(`Generated ${output.length} PDF file${output.length > 1 ? "s" : ""}.`);
+    } else if (output) {
       downloadBlob(output.blob, output.fileName);
       setExportSuccess(`PDF generated: ${output.fileName}`);
     } else {
-      setExportSuccess("Merge completed.");
+      setExportSuccess("PDF operation completed.");
     }
 
     setExportLoading(false);
@@ -205,11 +206,22 @@ export function PdfToolsWorkspace() {
       <div className="workspace-grid">
         <div className="workspace-left">
           <PdfToolSelectionPanel tools={pdfTools} activeToolId={activeTool.id} onChange={handleSelectTool} />
-          <PdfFileInputPanel disabled={exportLoading} onFilesSelected={handleFilesSelected} />
+          <PdfFileInputPanel
+            disabled={exportLoading}
+            hint={getPdfFileInputHint(activeTool.id)}
+            multiple={activeTool.id === "merge-pdf"}
+            onFilesSelected={handleFilesSelected}
+          />
           <PdfFileListPanel items={pdfItems} />
+          <PdfToolSettingsPanel
+            toolId={activeTool.id}
+            rotateDegrees={rotateDegrees}
+            onRotateDegreesChange={setRotateDegrees}
+          />
           <ExportPanel
             isLoading={exportLoading}
-            disabledReason={getMergeExportDisabledReason({
+            disabledReason={getPdfExportDisabledReason({
+              toolId: activeTool.id,
               files: pdfItems,
               previewLoading,
               previewError,
@@ -222,4 +234,17 @@ export function PdfToolsWorkspace() {
       </div>
     </>
   );
+}
+
+function buildPdfToolSettings(toolId: PdfToolId, generatePdf: boolean, rotateDegrees: 90 | 180 | 270) {
+  if (toolId === "rotate-pdf") {
+    return {
+      generatePdf,
+      degrees: rotateDegrees
+    };
+  }
+
+  return {
+    generatePdf
+  };
 }

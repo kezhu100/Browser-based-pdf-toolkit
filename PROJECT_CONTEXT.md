@@ -115,6 +115,8 @@ Current implemented examples:
 - `html-to-pdf`
 - `image-to-pdf`
 - `merge-pdf`
+- `split-pdf`
+- `rotate-pdf`
 
 Tool registry:
 
@@ -144,6 +146,8 @@ Implemented:
   - WEBP
 - PDF tools workspace
   - Merge PDF
+  - Split PDF
+  - Rotate PDF
 
 Current UI/workspace behavior:
 
@@ -157,8 +161,8 @@ Current UI/workspace behavior:
 
 Important limitation:
 
-- `merge-pdf` is the only implemented PDF manipulation tool so far
-- `split-pdf`, `reorder-pdf`, `rotate-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `crop-pdf` remain unimplemented placeholders
+- `merge-pdf`, `split-pdf`, and `rotate-pdf` are implemented
+- `reorder-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `crop-pdf` remain unimplemented placeholders
 
 ## 6. Deployment Architecture
 
@@ -265,6 +269,8 @@ Current status:
 - content/image workspaces working
 - pdf workspace added
 - merge-pdf working in browser
+- split-pdf working in browser
+- rotate-pdf working in browser
 
 Online demo:
 
@@ -286,12 +292,10 @@ Completed:
 - Phase 9.1 - image flow stabilization
 - Phase 9.5 - workspace router + lazy loading cleanup
 - Phase 10.1 - merge PDF
+- Phase 10.2 - split PDF + rotate PDF
 
 Next likely steps:
 
-- Phase 10.2 - more PDF manipulation tools
-  - split PDF
-  - rotate pages
 - Phase 10.3 - page-order operations
   - reorder pages
   - delete pages
@@ -380,4 +384,4 @@ Future AI sessions must keep in mind:
 - `HashRouter` is required for GitHub Pages
 - content/image tools use `DocumentPipeline`
 - PDF manipulation tools should extend the `pdf-engine` path
-- only `merge-pdf` is implemented for PDF manipulation at the current state
+- `merge-pdf`, `split-pdf`, and `rotate-pdf` are implemented for PDF manipulation at the current state

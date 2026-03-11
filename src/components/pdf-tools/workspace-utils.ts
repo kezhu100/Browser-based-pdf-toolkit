@@ -1,6 +1,7 @@
-import type { PdfFileItem } from "./types";
+import type { PdfFileItem, PdfToolId } from "./types";
 
-export function getMergeExportDisabledReason(params: {
+export function getPdfExportDisabledReason(params: {
+  toolId: PdfToolId;
   files: PdfFileItem[];
   previewLoading: boolean;
   previewError: string | null;
@@ -10,16 +11,19 @@ export function getMergeExportDisabledReason(params: {
     return "Merge is already running.";
   }
   if (params.files.length === 0) {
-    return "Add PDF files before merging.";
+    return "Add PDF files before running this tool.";
   }
-  if (params.files.length === 1) {
+  if (params.toolId === "merge-pdf" && params.files.length === 1) {
     return "Add at least two PDF files to merge.";
+  }
+  if (params.toolId !== "merge-pdf" && params.files.length !== 1) {
+    return "This tool requires exactly one PDF file.";
   }
   if (params.previewLoading) {
     return "Wait for validation to finish.";
   }
   if (params.previewError) {
-    return "Fix validation errors before merging.";
+    return "Fix validation errors before exporting.";
   }
   return null;
 }

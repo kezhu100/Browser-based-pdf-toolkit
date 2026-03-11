@@ -6,7 +6,7 @@ export const DEFAULT_CONVERSION_TOOL_ID: ToolId = "markdown-to-pdf";
 export const DEFAULT_PDF_TOOL_ID: ToolId = "merge-pdf";
 
 export const CONVERSION_TOOL_IDS: ToolId[] = ["markdown-to-pdf", "txt-to-pdf", "html-to-pdf", "image-to-pdf"];
-export const PDF_TOOL_IDS: ToolId[] = ["merge-pdf"];
+export const PDF_TOOL_IDS: ToolId[] = ["merge-pdf", "split-pdf", "rotate-pdf"];
 export const WORKSPACE_FAMILIES: WorkspaceFamily[] = ["content", "image", "pdf"];
 
 const CONTENT_TOOL_IDS: ToolId[] = ["markdown-to-pdf", "txt-to-pdf", "html-to-pdf"];

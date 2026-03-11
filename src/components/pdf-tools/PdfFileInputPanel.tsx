@@ -3,11 +3,13 @@ import { getPdfAcceptAttribute } from "./config";
 
 interface PdfFileInputPanelProps {
   disabled: boolean;
+  hint: string;
+  multiple: boolean;
   onFilesSelected: (files: File[]) => void;
 }
 
 export function PdfFileInputPanel(props: PdfFileInputPanelProps) {
-  const { disabled, onFilesSelected } = props;
+  const { disabled, hint, multiple, onFilesSelected } = props;
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
@@ -20,9 +22,9 @@ export function PdfFileInputPanel(props: PdfFileInputPanelProps) {
       <h3>PDF Files</h3>
       <label className="file-input">
         <span>Select PDF files</span>
-        <input type="file" accept={getPdfAcceptAttribute()} multiple disabled={disabled} onChange={handleChange} />
+        <input type="file" accept={getPdfAcceptAttribute()} multiple={multiple} disabled={disabled} onChange={handleChange} />
       </label>
-      <p className="subtle">Select two or more PDF files to merge in browser.</p>
+      <p className="subtle">{hint}</p>
     </section>
   );
 }

@@ -12,7 +12,7 @@ import type {
 import type { Result } from "../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
-import { mergePdfFiles } from "./adapters/pdfEditAdapter";
+import { mergePdfFiles, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
 
 function notImplemented<T>(message: string): Result<T> {
   return {
@@ -30,8 +30,8 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return mergePdfFiles(request);
   }
 
-  async split(_: SplitPdfRequest): Promise<Result<PdfSplitResult>> {
-    return notImplemented("Split PDF is not implemented in Phase 3.");
+  async split(request: SplitPdfRequest): Promise<Result<PdfSplitResult>> {
+    return splitPdfFile(request);
   }
 
   async reorder(_: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
@@ -46,8 +46,8 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return notImplemented("Page number insertion is not implemented in Phase 3.");
   }
 
-  async rotate(_: RotatePdfRequest): Promise<Result<PdfOperationResult>> {
-    return notImplemented("Rotate PDF is not implemented in Phase 3.");
+  async rotate(request: RotatePdfRequest): Promise<Result<PdfOperationResult>> {
+    return rotatePdfFile(request);
   }
 
   async crop(_: CropPdfRequest): Promise<Result<PdfOperationResult>> {
