@@ -52,10 +52,6 @@ async function run(context: ToolExecutionContext<SplitPdfToolRunSettings>): Prom
   };
 }
 
-function previewAdapter(_: ToolExecutionArtifact): string | null {
-  return null;
-}
-
 function readSinglePdfFile(context: ToolExecutionContext<SplitPdfToolRunSettings>): Result<PdfBinary> {
   const [source] = context.sourceDocuments;
 
@@ -126,6 +122,5 @@ export const splitPdfTool: ToolPlugin<SplitPdfToolRunSettings> = {
   inputTypes: ["pdf"],
   capabilities: ["split", "preview"],
   settingsSchemaName: "SplitPdfSettings",
-  run,
-  previewAdapter
+  run
 };

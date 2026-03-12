@@ -1,5 +1,4 @@
 import type {
-  PageBox,
   PdfBinary,
   PdfExportOptions,
   PdfOperationResult,

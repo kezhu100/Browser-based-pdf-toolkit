@@ -21,10 +21,3 @@ export interface PdfOperationResult {
 export interface PdfSplitResult {
   files: PdfOperationResult[];
 }
-
-export interface PageBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}

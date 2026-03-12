@@ -55,10 +55,6 @@ async function run(context: ToolExecutionContext<RotatePdfToolRunSettings>): Pro
   };
 }
 
-function previewAdapter(_: ToolExecutionArtifact): string | null {
-  return null;
-}
-
 function readSinglePdfFile(context: ToolExecutionContext<RotatePdfToolRunSettings>): Result<PdfBinary> {
   const [source] = context.sourceDocuments;
 
@@ -129,6 +125,5 @@ export const rotatePdfTool: ToolPlugin<RotatePdfToolRunSettings> = {
   inputTypes: ["pdf"],
   capabilities: ["rotate", "preview"],
   settingsSchemaName: "RotatePdfSettings",
-  run,
-  previewAdapter
+  run
 };

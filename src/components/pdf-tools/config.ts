@@ -63,7 +63,10 @@ export function getPdfFileInputHint(toolId: PdfToolId): string {
   if (toolId === "crop-pdf") {
     return "Select one PDF file to apply a fixed inset crop in browser.";
   }
-  return "Select one PDF file to rotate. Phase 10.2 rotates all pages in browser.";
+  if (toolId === "rotate-pdf") {
+    return "Select one PDF file to rotate. Phase 10.2 rotates all pages in browser.";
+  }
+  return "Select PDF files in browser.";
 }
 
 export function getPdfExportFileName(toolId: PdfToolId): string {
@@ -87,5 +90,8 @@ export function getPdfExportFileName(toolId: PdfToolId): string {
   if (toolId === "crop-pdf") {
     return `cropped-${timestamp}.pdf`;
   }
-  return `rotated-${timestamp}.pdf`;
+  if (toolId === "rotate-pdf") {
+    return `rotated-${timestamp}.pdf`;
+  }
+  return `pdf-tool-${timestamp}.pdf`;
 }

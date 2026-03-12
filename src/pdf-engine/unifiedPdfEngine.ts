@@ -4,13 +4,6 @@ import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
 import { addPageNumbersToPdfFile, addWatermarkToPdfFile, cropPdfFile, mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
 
-function notImplemented<T>(message: string): Result<T> {
-  return {
-    ok: false,
-    error: { code: "NOT_IMPLEMENTED", message }
-  };
-}
-
 export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine {
   private readonly renderEngine = new Html2PdfRenderEngine();
 
