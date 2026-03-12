@@ -441,6 +441,8 @@ export function PdfToolsWorkspace() {
           />
           <ExportPanel
             isLoading={exportLoading}
+            idleLabel="Apply"
+            loadingLabel="Applying..."
             disabledReason={getPdfExportDisabledReason({
               toolId: activeTool.id,
               files: pdfItems,

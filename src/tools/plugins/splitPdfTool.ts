@@ -99,8 +99,12 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
 function createSplitPreviewHtml(fileName: string): string {
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to split <strong>${escapeHtml(fileName)}</strong> into separate single-page PDF files.</p>`,
-    "  <p>Each output page will be downloaded as an individual PDF.</p>",
+    "  <p><strong>Operation:</strong> Split PDF</p>",
+    `  <p><strong>Files affected:</strong> 1 PDF file (${escapeHtml(fileName)})</p>`,
+    "  <ul>",
+    "    <li><strong>Pages affected:</strong> All pages</li>",
+    "    <li><strong>Settings:</strong> Split into single-page PDF files</li>",
+    "  </ul>",
     "</div>"
   ].join("\n");
 }

@@ -102,8 +102,12 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
 function createRotatePreviewHtml(fileName: string, degrees: 90 | 180 | 270): string {
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to rotate <strong>${escapeHtml(fileName)}</strong> by <strong>${degrees} degrees</strong> in the browser.</p>`,
-    "  <p>This Phase 10.2 workflow rotates all pages of the uploaded PDF.</p>",
+    "  <p><strong>Operation:</strong> Rotate PDF</p>",
+    `  <p><strong>Files affected:</strong> 1 PDF file (${escapeHtml(fileName)})</p>`,
+    "  <ul>",
+    "    <li><strong>Pages affected:</strong> All pages</li>",
+    `    <li><strong>Settings:</strong> Rotate by ${degrees} degrees</li>`,
+    "  </ul>",
     "</div>"
   ].join("\n");
 }

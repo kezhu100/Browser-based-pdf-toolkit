@@ -113,13 +113,17 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
 
 function createReorderPreviewHtml(fileName: string, pageOrder: number[]): string {
   const pageList = pageOrder
-    .map((pageIndex, index) => `<li><strong>${index + 1}.</strong> Page ${pageIndex + 1}</li>`)
+    .map((pageIndex, index) => `<li><strong>Position ${index + 1}:</strong> Page ${pageIndex + 1}</li>`)
     .join("");
 
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to export <strong>${escapeHtml(fileName)}</strong> with <strong>${pageOrder.length}</strong> kept page(s).</p>`,
-    "  <p>The current page order will be applied in browser during export.</p>",
+    "  <p><strong>Operation:</strong> Reorder PDF Pages</p>",
+    `  <p><strong>Files affected:</strong> 1 PDF file (${escapeHtml(fileName)})</p>`,
+    "  <ul>",
+    `    <li><strong>Pages affected:</strong> ${pageOrder.length} kept page(s)</li>`,
+    "    <li><strong>Settings:</strong> Apply current page order and removals</li>",
+    "  </ul>",
     "  <ol>",
     `    ${pageList}`,
     "  </ol>",

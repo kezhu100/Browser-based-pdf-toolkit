@@ -46,25 +46,25 @@ export function getPdfAcceptAttribute(): string {
 
 export function getPdfFileInputHint(toolId: PdfToolId): string {
   if (toolId === "merge-pdf") {
-    return "Select two or more PDF files to merge in browser.";
+    return "Upload two or more PDF files.";
   }
   if (toolId === "split-pdf") {
-    return "Select one PDF file. Phase 10.2 splits it into separate single-page PDFs.";
+    return "Upload exactly one PDF file.";
   }
   if (toolId === "reorder-pdf") {
-    return "Select one PDF file to reorder or remove pages in browser.";
+    return "Upload exactly one PDF file.";
   }
   if (toolId === "watermark-pdf") {
-    return "Select one PDF file to add a text watermark in browser.";
+    return "Upload exactly one PDF file.";
   }
   if (toolId === "page-numbers-pdf") {
-    return "Select one PDF file to add page numbers in browser.";
+    return "Upload exactly one PDF file.";
   }
   if (toolId === "crop-pdf") {
-    return "Select one PDF file to apply a fixed inset crop in browser.";
+    return "Upload exactly one PDF file.";
   }
   if (toolId === "rotate-pdf") {
-    return "Select one PDF file to rotate. Phase 10.2 rotates all pages in browser.";
+    return "Upload exactly one PDF file.";
   }
   return "Select PDF files in browser.";
 }
@@ -73,25 +73,25 @@ export function getPdfExportFileName(toolId: PdfToolId): string {
   const timestamp = Date.now();
 
   if (toolId === "merge-pdf") {
-    return `merged-${timestamp}.pdf`;
+    return `merge-${timestamp}.pdf`;
   }
   if (toolId === "split-pdf") {
-    return `split-${timestamp}`;
+    return `split-${timestamp}.pdf`;
   }
   if (toolId === "reorder-pdf") {
-    return `reordered-${timestamp}.pdf`;
+    return `reorder-${timestamp}.pdf`;
   }
   if (toolId === "watermark-pdf") {
-    return `watermarked-${timestamp}.pdf`;
+    return `watermark-${timestamp}.pdf`;
   }
   if (toolId === "page-numbers-pdf") {
     return `page-numbers-${timestamp}.pdf`;
   }
   if (toolId === "crop-pdf") {
-    return `cropped-${timestamp}.pdf`;
+    return `crop-${timestamp}.pdf`;
   }
   if (toolId === "rotate-pdf") {
-    return `rotated-${timestamp}.pdf`;
+    return `rotate-${timestamp}.pdf`;
   }
   return `pdf-tool-${timestamp}.pdf`;
 }

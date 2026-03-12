@@ -104,12 +104,16 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
 
 function createMergePreviewHtml(files: PdfBinary[]): string {
   const items = files
-    .map((file, index) => `<li><strong>${index + 1}.</strong> ${escapeHtml(file.fileName)}</li>`)
+    .map((file, index) => `<li><strong>File ${index + 1}:</strong> ${escapeHtml(file.fileName)}</li>`)
     .join("");
 
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to merge <strong>${files.length}</strong> PDF files in browser.</p>`,
+    "  <p><strong>Operation:</strong> Merge PDF</p>",
+    `  <p><strong>Files affected:</strong> ${files.length} PDF file(s)</p>`,
+    "  <ul>",
+    "    <li><strong>Settings:</strong> Merge files in current upload order</li>",
+    "  </ul>",
     "  <ol>",
     `    ${items}`,
     "  </ol>",

@@ -128,8 +128,10 @@ function createPreviewHtml(
 ): string {
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to crop <strong>${escapeHtml(fileName)}</strong> in the browser.</p>`,
+    "  <p><strong>Operation:</strong> Crop PDF</p>",
+    `  <p><strong>Files affected:</strong> 1 PDF file (${escapeHtml(fileName)})</p>`,
     "  <ul>",
+    "    <li><strong>Pages affected:</strong> All pages</li>",
     `    <li><strong>Top inset:</strong> ${settings.top} pt</li>`,
     `    <li><strong>Right inset:</strong> ${settings.right} pt</li>`,
     `    <li><strong>Bottom inset:</strong> ${settings.bottom} pt</li>`,

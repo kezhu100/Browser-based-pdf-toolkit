@@ -135,8 +135,10 @@ function createPreviewHtml(
 
   return [
     "<div class=\"pdf-merge-preview\">",
-    `  <p>Ready to add page numbers to <strong>${escapeHtml(fileName)}</strong> in the browser.</p>`,
+    "  <p><strong>Operation:</strong> Add Page Numbers</p>",
+    `  <p><strong>Files affected:</strong> 1 PDF file (${escapeHtml(fileName)})</p>`,
     "  <ul>",
+    "    <li><strong>Pages affected:</strong> All pages</li>",
     `    <li><strong>Start number:</strong> ${settings.startNumber}</li>`,
     `    <li><strong>Position:</strong> ${escapeHtml(formatPositionLabel(settings.position))}</li>`,
     `    <li><strong>Font size:</strong> ${settings.fontSize}px</li>`,
