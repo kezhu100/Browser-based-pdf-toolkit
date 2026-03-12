@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { PDFDocument } from "pdf-lib";
 import { createRuntimeServices } from "../../app/runtimeServices";
 import { useAppStore } from "../../state/useAppStore";
 import { toolRegistryById } from "../../tools/registry";
@@ -47,12 +48,67 @@ export function PdfToolsWorkspace() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
   const [rotateDegrees, setRotateDegrees] = useState<90 | 180 | 270>(90);
+  const [reorderPageCount, setReorderPageCount] = useState<number | null>(null);
+  const [reorderPageOrder, setReorderPageOrder] = useState<number[]>([]);
+  const [reorderLoading, setReorderLoading] = useState<boolean>(false);
+  const [reorderError, setReorderError] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeToolIdInStore !== activeToolId) {
       setActiveTool(activeToolId);
     }
   }, [activeToolId, activeToolIdInStore, setActiveTool]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function analyzeReorderFile() {
+      if (activeTool.id !== "reorder-pdf" || pdfItems.length !== 1) {
+        setReorderLoading(false);
+        setReorderError(null);
+        setReorderPageCount(null);
+        setReorderPageOrder([]);
+        return;
+      }
+
+      const content = pdfItems[0].sourceDocument.content;
+      const bytes = toUint8Array(content);
+
+      setReorderLoading(true);
+      setReorderError(null);
+
+      try {
+        const document = await PDFDocument.load(bytes);
+        const pageCount = document.getPageCount();
+
+        if (cancelled) {
+          return;
+        }
+
+        setReorderPageCount(pageCount);
+        setReorderPageOrder((current) => {
+          const nextDefaultOrder = createSequentialPageOrder(pageCount);
+          return isValidReorderState(current, pageCount) ? current : nextDefaultOrder;
+        });
+        setReorderLoading(false);
+      } catch {
+        if (cancelled) {
+          return;
+        }
+
+        setReorderPageCount(null);
+        setReorderPageOrder([]);
+        setReorderError("Failed to read pages from the selected PDF.");
+        setReorderLoading(false);
+      }
+    }
+
+    analyzeReorderFile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTool.id, pdfItems]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,9 +123,29 @@ export function PdfToolsWorkspace() {
         return;
       }
 
+      if (activeTool.id === "reorder-pdf") {
+        if (reorderLoading) {
+          setPreviewLoading(false);
+          return;
+        }
+
+        if (reorderError) {
+          setPreviewError(reorderError);
+          setPreviewHtml("");
+          setPreviewLoading(false);
+          return;
+        }
+
+        if (reorderPageCount === null) {
+          setPreviewHtml("");
+          setPreviewLoading(false);
+          return;
+        }
+      }
+
       const result = await activeTool.run({
         sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-        settings: buildPdfToolSettings(activeTool.id, false, rotateDegrees),
+        settings: buildPdfToolSettings(activeTool.id, false, rotateDegrees, reorderPageOrder),
         exportOptions: {
           fileName: getPdfExportFileName(activeTool.id),
           pageSize: "A4",
@@ -101,7 +177,7 @@ export function PdfToolsWorkspace() {
     return () => {
       cancelled = true;
     };
-  }, [activeTool, pdfItems, rotateDegrees, runtimeServices]);
+  }, [activeTool, pdfItems, reorderError, reorderLoading, reorderPageCount, reorderPageOrder, rotateDegrees, runtimeServices]);
 
   if (pdfTools.length === 0) {
     return <p>PDF tool registry is not configured correctly.</p>;
@@ -157,7 +233,7 @@ export function PdfToolsWorkspace() {
     setFileError(null);
     setFileStatus(
       toolId !== "merge-pdf" && pdfItems.length > 1
-        ? `Kept the first PDF file for ${toolId === "split-pdf" ? "split" : "rotate"}.`
+        ? `Kept the first PDF file for ${toolId === "split-pdf" ? "split" : toolId === "reorder-pdf" ? "reorder" : "rotate"}.`
         : null
     );
   }
@@ -169,7 +245,7 @@ export function PdfToolsWorkspace() {
 
     const result = await activeTool.run({
       sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-      settings: buildPdfToolSettings(activeTool.id, true, rotateDegrees),
+      settings: buildPdfToolSettings(activeTool.id, true, rotateDegrees, reorderPageOrder),
       exportOptions: {
         fileName: getPdfExportFileName(activeTool.id),
         pageSize: "A4",
@@ -228,13 +304,23 @@ export function PdfToolsWorkspace() {
           <PdfToolSettingsPanel
             toolId={activeTool.id}
             rotateDegrees={rotateDegrees}
+            reorderPageCount={reorderPageCount}
+            reorderPageOrder={reorderPageOrder}
+            reorderLoading={reorderLoading}
+            reorderError={reorderError}
             onRotateDegreesChange={setRotateDegrees}
+            onMoveReorderPage={handleMoveReorderPage}
+            onRemoveReorderPage={handleRemoveReorderPage}
+            onRestoreReorderPage={handleRestoreReorderPage}
+            onResetReorderPages={handleResetReorderPages}
           />
           <ExportPanel
             isLoading={exportLoading}
             disabledReason={getPdfExportDisabledReason({
               toolId: activeTool.id,
               files: pdfItems,
+              reorderPageOrder,
+              reorderReady: activeTool.id !== "reorder-pdf" || (!!reorderPageCount && !reorderLoading && !reorderError),
               previewLoading,
               previewError,
               exportLoading
@@ -246,9 +332,56 @@ export function PdfToolsWorkspace() {
       </div>
     </>
   );
+
+  function handleMoveReorderPage(position: number, direction: "up" | "down") {
+    setReorderPageOrder((current) => {
+      const target = direction === "up" ? position - 1 : position + 1;
+      if (position < 0 || position >= current.length || target < 0 || target >= current.length) {
+        return current;
+      }
+
+      const next = [...current];
+      [next[position], next[target]] = [next[target], next[position]];
+      return next;
+    });
+  }
+
+  function handleRemoveReorderPage(pageIndex: number) {
+    setReorderPageOrder((current) => current.filter((value) => value !== pageIndex));
+  }
+
+  function handleRestoreReorderPage(pageIndex: number) {
+    setReorderPageOrder((current) => {
+      if (current.includes(pageIndex)) {
+        return current;
+      }
+
+      return [...current, pageIndex].sort((left, right) => left - right);
+    });
+  }
+
+  function handleResetReorderPages() {
+    if (reorderPageCount === null) {
+      return;
+    }
+
+    setReorderPageOrder(createSequentialPageOrder(reorderPageCount));
+  }
 }
 
-function buildPdfToolSettings(toolId: PdfToolId, generatePdf: boolean, rotateDegrees: 90 | 180 | 270) {
+function buildPdfToolSettings(
+  toolId: PdfToolId,
+  generatePdf: boolean,
+  rotateDegrees: 90 | 180 | 270,
+  reorderPageOrder: number[]
+) {
+  if (toolId === "reorder-pdf") {
+    return {
+      generatePdf,
+      pageOrder: reorderPageOrder
+    };
+  }
+
   if (toolId === "rotate-pdf") {
     return {
       generatePdf,
@@ -259,4 +392,35 @@ function buildPdfToolSettings(toolId: PdfToolId, generatePdf: boolean, rotateDeg
   return {
     generatePdf
   };
+}
+
+function createSequentialPageOrder(pageCount: number): number[] {
+  return Array.from({ length: pageCount }, (_, index) => index);
+}
+
+function isValidReorderState(pageOrder: number[], pageCount: number): boolean {
+  if (pageOrder.length === 0) {
+    return false;
+  }
+
+  const seen = new Set<number>();
+  for (const pageIndex of pageOrder) {
+    if (pageIndex < 0 || pageIndex >= pageCount || seen.has(pageIndex)) {
+      return false;
+    }
+    seen.add(pageIndex);
+  }
+
+  return true;
+}
+
+function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
+  if (content instanceof Uint8Array) {
+    return content;
+  }
+  if (content instanceof ArrayBuffer) {
+    return new Uint8Array(content);
+  }
+
+  return new TextEncoder().encode(content);
 }

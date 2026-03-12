@@ -142,3 +142,32 @@ Still not implemented:
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `crop-pdf`
+
+## Phase 10.3 - Reorder PDF Pages
+
+- Kept the existing PDF workspace and `ToolPlugin` architecture
+- Implemented `reorder-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - inspect page count locally
+  - move pages up/down in a lightweight order editor
+  - remove pages from the export order
+  - restore removed pages if needed
+  - export the reordered PDF in browser
+- Extended `UnifiedPdfEngine` with a working `reorder()` method
+- Implemented the page reorder/delete export path through the existing `pdf-engine` adapter layer using `pdf-lib`
+- Kept the preview/UI lightweight and summary-based rather than adding thumbnail or drag-and-drop editing
+
+### Current limitation after Phase 10.3
+
+Implemented PDF manipulation tools:
+
+- `merge-pdf`
+- `split-pdf`
+- `reorder-pdf`
+- `rotate-pdf`
+
+Still not implemented:
+
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `crop-pdf`

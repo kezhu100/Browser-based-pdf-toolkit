@@ -12,7 +12,7 @@ import type {
 import type { Result } from "../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
-import { mergePdfFiles, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
+import { mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
 
 function notImplemented<T>(message: string): Result<T> {
   return {
@@ -34,8 +34,8 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return splitPdfFile(request);
   }
 
-  async reorder(_: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
-    return notImplemented("Reorder PDF is not implemented in Phase 3.");
+  async reorder(request: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
+    return reorderPdfFile(request);
   }
 
   async watermark(_: WatermarkPdfRequest): Promise<Result<PdfOperationResult>> {

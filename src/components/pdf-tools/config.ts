@@ -4,7 +4,7 @@ import type { PdfFileItem, PdfToolId } from "./types";
 const PDF_MIME_TYPE = "application/pdf";
 const PDF_EXTENSION = ".pdf";
 
-export const PDF_TOOL_IDS: PdfToolId[] = ["merge-pdf", "split-pdf", "rotate-pdf"];
+export const PDF_TOOL_IDS: PdfToolId[] = ["merge-pdf", "split-pdf", "reorder-pdf", "rotate-pdf"];
 
 export function isSupportedPdfFile(file: File): boolean {
   return file.type.toLowerCase() === PDF_MIME_TYPE || file.name.toLowerCase().endsWith(PDF_EXTENSION);
@@ -51,6 +51,9 @@ export function getPdfFileInputHint(toolId: PdfToolId): string {
   if (toolId === "split-pdf") {
     return "Select one PDF file. Phase 10.2 splits it into separate single-page PDFs.";
   }
+  if (toolId === "reorder-pdf") {
+    return "Select one PDF file to reorder or remove pages in browser.";
+  }
   return "Select one PDF file to rotate. Phase 10.2 rotates all pages in browser.";
 }
 
@@ -62,6 +65,9 @@ export function getPdfExportFileName(toolId: PdfToolId): string {
   }
   if (toolId === "split-pdf") {
     return `split-${timestamp}`;
+  }
+  if (toolId === "reorder-pdf") {
+    return `reordered-${timestamp}.pdf`;
   }
   return `rotated-${timestamp}.pdf`;
 }

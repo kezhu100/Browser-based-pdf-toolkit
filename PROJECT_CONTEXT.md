@@ -116,6 +116,7 @@ Current implemented examples:
 - `image-to-pdf`
 - `merge-pdf`
 - `split-pdf`
+- `reorder-pdf`
 - `rotate-pdf`
 
 Tool registry:
@@ -147,6 +148,7 @@ Implemented:
 - PDF tools workspace
   - Merge PDF
   - Split PDF
+  - Reorder PDF pages
   - Rotate PDF
 
 Current UI/workspace behavior:
@@ -161,8 +163,8 @@ Current UI/workspace behavior:
 
 Important limitation:
 
-- `merge-pdf`, `split-pdf`, and `rotate-pdf` are implemented
-- `reorder-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `crop-pdf` remain unimplemented placeholders
+- `merge-pdf`, `split-pdf`, `reorder-pdf`, and `rotate-pdf` are implemented
+- `watermark-pdf`, `page-numbers-pdf`, and `crop-pdf` remain unimplemented placeholders
 
 ## 6. Deployment Architecture
 
@@ -270,8 +272,10 @@ Current status:
 - pdf workspace added
 - merge-pdf working in browser
 - split-pdf working in browser
+- reorder-pdf working in browser
 - rotate-pdf working in browser
 - Phase 10.2 polish pass applied for workspace UX wording, single-file tool switching, and small PDF adapter memory cleanup
+- Phase 10.3 added a minimal single-file page-order editor with browser-side reorder/delete export
 
 Online demo:
 
@@ -294,12 +298,10 @@ Completed:
 - Phase 9.5 - workspace router + lazy loading cleanup
 - Phase 10.1 - merge PDF
 - Phase 10.2 - split PDF + rotate PDF
+- Phase 10.3 - reorder PDF pages + page removal
 
 Next likely steps:
 
-- Phase 10.3 - page-order operations
-  - reorder pages
-  - delete pages
 - later document enhancement
   - watermark
   - page numbers
@@ -385,4 +387,4 @@ Future AI sessions must keep in mind:
 - `HashRouter` is required for GitHub Pages
 - content/image tools use `DocumentPipeline`
 - PDF manipulation tools should extend the `pdf-engine` path
-- `merge-pdf`, `split-pdf`, and `rotate-pdf` are implemented for PDF manipulation at the current state
+- `merge-pdf`, `split-pdf`, `reorder-pdf`, and `rotate-pdf` are implemented for PDF manipulation at the current state

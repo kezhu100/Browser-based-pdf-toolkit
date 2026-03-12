@@ -27,6 +27,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - Image -> PDF
 - Merge PDF
 - Split PDF
+- Reorder PDF Pages
 - Rotate PDF
 
 - Markdown 转 PDF
@@ -35,6 +36,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - 图片转 PDF
 - PDF 合并
 - PDF 拆分
+- PDF 页面重排
 - PDF 旋转
 
 ### Implemented workspace families / 已实现工作区类型
@@ -69,11 +71,11 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 
 - `merge-pdf`
 - `split-pdf`
+- `reorder-pdf`
 - `rotate-pdf`
 
 ### Not implemented yet / 尚未实现
 
-- `reorder-pdf`
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `crop-pdf`
@@ -143,10 +145,11 @@ Important deployment constraints:
 
 - Merge multiple PDF files in browser
 - Split one PDF into separate single-page PDFs
+- Reorder one PDF and remove pages before export
 - Rotate one PDF by 90 / 180 / 270 degrees
 - local file validation
 - lightweight operation summary preview
-- browser download for merged, split, or rotated results
+- browser download for merged, split, reordered, or rotated results
 
 Small Phase 10.2 polish:
 
@@ -169,11 +172,11 @@ Completed:
 - image -> PDF
 - merge PDF
 - split PDF
+- reorder/delete page workflow
 - rotate PDF
 
 Planned next:
 
-- reorder/delete page workflows
 - watermark and page numbers
 
 ## Constraints

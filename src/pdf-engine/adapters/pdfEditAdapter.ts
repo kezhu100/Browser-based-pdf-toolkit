@@ -1,5 +1,5 @@
 import { degrees, PDFDocument } from "pdf-lib";
-import type { MergePdfRequest, RotatePdfRequest, SplitPdfRequest } from "../interfaces";
+import type { MergePdfRequest, ReorderPdfRequest, RotatePdfRequest, SplitPdfRequest } from "../interfaces";
 import type { Result } from "../../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../../types/pdf-engine";
 
@@ -173,10 +173,99 @@ export async function rotatePdfFile(request: RotatePdfRequest): Promise<Result<P
   }
 }
 
-function ensurePdfFileName(fileName: string): string {
+export async function reorderPdfFile(request: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
+  if (request.file.bytes.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Reorder PDF requires a non-empty PDF file."
+      }
+    };
+  }
+
+  if (request.pageOrder.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Keep at least one page in the reordered PDF."
+      }
+    };
+  }
+
+  try {
+    const source = await PDFDocument.load(request.file.bytes);
+    const pageCount = source.getPageCount();
+
+    if (pageCount === 0) {
+      return {
+        ok: false,
+        error: {
+          code: "INVALID_INPUT",
+          message: "The selected PDF has no pages to reorder."
+        }
+      };
+    }
+
+    const seen = new Set<number>();
+    for (const pageIndex of request.pageOrder) {
+      if (pageIndex < 0 || pageIndex >= pageCount) {
+        return {
+          ok: false,
+          error: {
+            code: "INVALID_INPUT",
+            message: `Page index ${pageIndex + 1} is out of range for this PDF.`
+          }
+        };
+      }
+
+      if (seen.has(pageIndex)) {
+        return {
+          ok: false,
+          error: {
+            code: "INVALID_INPUT",
+            message: `Page ${pageIndex + 1} appears more than once in the requested order.`
+          }
+        };
+      }
+
+      seen.add(pageIndex);
+    }
+
+    const reordered = await PDFDocument.create();
+    const copiedPages = await reordered.copyPages(source, request.pageOrder);
+
+    for (const page of copiedPages) {
+      reordered.addPage(page);
+    }
+
+    const bytes = await reordered.save();
+
+    return {
+      ok: true,
+      data: {
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
+        fileName: ensurePdfFileName(request.fileName, "reordered"),
+        mimeType: "application/pdf"
+      }
+    };
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        code: "PDF_ENGINE_ERROR",
+        message: "Failed to reorder the PDF in the browser.",
+        cause
+      }
+    };
+  }
+}
+
+function ensurePdfFileName(fileName: string, fallbackStem = "merged"): string {
   const trimmed = fileName.trim();
   if (trimmed.length === 0) {
-    return "merged.pdf";
+    return `${fallbackStem}.pdf`;
   }
 
   return trimmed.toLowerCase().endsWith(".pdf") ? trimmed : `${trimmed}.pdf`;

@@ -265,6 +265,50 @@ input[type="file"] {
   gap: 6px;
 }
 
+.pdf-page-order-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pdf-order-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.pdf-page-order-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdf-page-order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.pdf-page-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pdf-removed-pages h4 {
+  margin: 0 0 8px 0;
+}
+
+.pdf-removed-page-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .export-btn {
   border: none;
   border-radius: 6px;
@@ -310,5 +354,11 @@ input[type="file"] {
 @media (max-width: 900px) {
   .workspace-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pdf-order-toolbar,
+  .pdf-page-order-item {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
