@@ -40,6 +40,11 @@ export interface WatermarkPdfRequest {
 export interface PageNumbersPdfRequest {
   file: PdfBinary;
   fileName: string;
+  startNumber: number;
+  position: "bottom-center" | "bottom-right" | "top-center" | "top-right";
+  fontSize: number;
+  margin: number;
+  prefix: string;
 }
 
 export interface RotatePdfRequest {

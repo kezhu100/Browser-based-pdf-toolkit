@@ -12,7 +12,7 @@ import type {
 import type { Result } from "../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
-import { mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
+import { addPageNumbersToPdfFile, mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
 
 function notImplemented<T>(message: string): Result<T> {
   return {
@@ -42,8 +42,8 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return notImplemented("Watermark PDF is not implemented in Phase 3.");
   }
 
-  async pageNumbers(_: PageNumbersPdfRequest): Promise<Result<PdfOperationResult>> {
-    return notImplemented("Page number insertion is not implemented in Phase 3.");
+  async pageNumbers(request: PageNumbersPdfRequest): Promise<Result<PdfOperationResult>> {
+    return addPageNumbersToPdfFile(request);
   }
 
   async rotate(request: RotatePdfRequest): Promise<Result<PdfOperationResult>> {

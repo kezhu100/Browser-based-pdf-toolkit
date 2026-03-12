@@ -4,11 +4,21 @@ import { PdfPageOrderEditor } from "./PdfPageOrderEditor";
 interface PdfToolSettingsPanelProps {
   toolId: PdfToolId;
   rotateDegrees: 90 | 180 | 270;
+  pageNumberStart: number;
+  pageNumberPosition: "bottom-center" | "bottom-right" | "top-center" | "top-right";
+  pageNumberFontSize: number;
+  pageNumberMargin: number;
+  pageNumberPrefix: string;
   reorderPageCount: number | null;
   reorderPageOrder: number[];
   reorderLoading: boolean;
   reorderError: string | null;
   onRotateDegreesChange: (degrees: 90 | 180 | 270) => void;
+  onPageNumberStartChange: (value: number) => void;
+  onPageNumberPositionChange: (value: "bottom-center" | "bottom-right" | "top-center" | "top-right") => void;
+  onPageNumberFontSizeChange: (value: number) => void;
+  onPageNumberMarginChange: (value: number) => void;
+  onPageNumberPrefixChange: (value: string) => void;
   onMoveReorderPage: (position: number, direction: "up" | "down") => void;
   onRemoveReorderPage: (pageIndex: number) => void;
   onRestoreReorderPage: (pageIndex: number) => void;
@@ -19,11 +29,21 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
   const {
     toolId,
     rotateDegrees,
+    pageNumberStart,
+    pageNumberPosition,
+    pageNumberFontSize,
+    pageNumberMargin,
+    pageNumberPrefix,
     reorderPageCount,
     reorderPageOrder,
     reorderLoading,
     reorderError,
     onRotateDegreesChange,
+    onPageNumberStartChange,
+    onPageNumberPositionChange,
+    onPageNumberFontSizeChange,
+    onPageNumberMarginChange,
+    onPageNumberPrefixChange,
     onMoveReorderPage,
     onRemoveReorderPage,
     onRestoreReorderPage,
@@ -59,6 +79,66 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
             />
           ) : null}
         </>
+      ) : toolId === "page-numbers-pdf" ? (
+        <div className="settings-grid">
+          <label className="field">
+            <span>Start Number</span>
+            <input
+              type="number"
+              min={1}
+              max={999999}
+              value={pageNumberStart}
+              onChange={(event) => onPageNumberStartChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Position</span>
+            <select
+              value={pageNumberPosition}
+              onChange={(event) =>
+                onPageNumberPositionChange(
+                  event.target.value as "bottom-center" | "bottom-right" | "top-center" | "top-right"
+                )
+              }
+            >
+              <option value="bottom-center">Bottom center</option>
+              <option value="bottom-right">Bottom right</option>
+              <option value="top-center">Top center</option>
+              <option value="top-right">Top right</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Font Size</span>
+            <input
+              type="number"
+              min={6}
+              max={72}
+              value={pageNumberFontSize}
+              onChange={(event) => onPageNumberFontSizeChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Margin</span>
+            <input
+              type="number"
+              min={0}
+              max={200}
+              value={pageNumberMargin}
+              onChange={(event) => onPageNumberMarginChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Prefix</span>
+            <input
+              type="text"
+              maxLength={40}
+              value={pageNumberPrefix}
+              onChange={(event) => onPageNumberPrefixChange(event.target.value)}
+              placeholder="Page "
+            />
+          </label>
+          <p className="subtle">Phase 10.4 keeps page numbering minimal: one PDF in, preset placement, browser-side export.</p>
+        </div>
       ) : (
         <div className="settings-grid">
           <label className="field">

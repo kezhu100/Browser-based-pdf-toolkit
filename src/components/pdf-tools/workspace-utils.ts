@@ -10,6 +10,9 @@ function getPdfToolActionLabel(toolId: PdfToolId): string {
   if (toolId === "reorder-pdf") {
     return "Reorder";
   }
+  if (toolId === "page-numbers-pdf") {
+    return "Add Page Numbers";
+  }
   return "Rotate";
 }
 

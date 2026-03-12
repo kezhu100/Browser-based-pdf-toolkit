@@ -89,6 +89,8 @@ Current implemented manipulation tools:
 
 - `merge-pdf`
 - `split-pdf`
+- `reorder-pdf`
+- `page-numbers-pdf`
 - `rotate-pdf`
 
 Placeholder manipulation tools still exist in the registry, but they are not implemented yet.
@@ -125,19 +127,19 @@ Current responsibilities:
 - `generateFromModel()` for content/image export
 - `merge()` for PDF manipulation
 - `split()` for single-file page splitting
+- `reorder()` for page reorder/delete export
+- `pageNumbers()` for page numbering export
 - `rotate()` for page rotation
 
 Current implementation details:
 
 - content/image PDF generation uses the HTML-based generator
 - merge uses `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
-- split and rotate also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
+- split, reorder, page numbering, and rotate also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
 
 Not yet implemented in the engine:
 
-- `reorder()`
 - `watermark()`
-- `pageNumbers()`
 - `crop()`
 
 ## ToolPlugin Contract
@@ -233,7 +235,6 @@ Not included yet:
 
 - page thumbnails
 - page-level manipulation UI
-- reorder/delete
 
 ## Routing and Deployment Constraints
 

@@ -48,6 +48,13 @@ export function PdfToolsWorkspace() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
   const [rotateDegrees, setRotateDegrees] = useState<90 | 180 | 270>(90);
+  const [pageNumberStart, setPageNumberStart] = useState<number>(1);
+  const [pageNumberPosition, setPageNumberPosition] = useState<"bottom-center" | "bottom-right" | "top-center" | "top-right">(
+    "bottom-center"
+  );
+  const [pageNumberFontSize, setPageNumberFontSize] = useState<number>(12);
+  const [pageNumberMargin, setPageNumberMargin] = useState<number>(24);
+  const [pageNumberPrefix, setPageNumberPrefix] = useState<string>("Page ");
   const [reorderPageCount, setReorderPageCount] = useState<number | null>(null);
   const [reorderPageOrder, setReorderPageOrder] = useState<number[]>([]);
   const [reorderLoading, setReorderLoading] = useState<boolean>(false);
@@ -145,7 +152,17 @@ export function PdfToolsWorkspace() {
 
       const result = await activeTool.run({
         sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-        settings: buildPdfToolSettings(activeTool.id, false, rotateDegrees, reorderPageOrder),
+        settings: buildPdfToolSettings(
+          activeTool.id,
+          false,
+          rotateDegrees,
+          reorderPageOrder,
+          pageNumberStart,
+          pageNumberPosition,
+          pageNumberFontSize,
+          pageNumberMargin,
+          pageNumberPrefix
+        ),
         exportOptions: {
           fileName: getPdfExportFileName(activeTool.id),
           pageSize: "A4",
@@ -177,7 +194,21 @@ export function PdfToolsWorkspace() {
     return () => {
       cancelled = true;
     };
-  }, [activeTool, pdfItems, reorderError, reorderLoading, reorderPageCount, reorderPageOrder, rotateDegrees, runtimeServices]);
+  }, [
+    activeTool,
+    pdfItems,
+    reorderError,
+    reorderLoading,
+    reorderPageCount,
+    reorderPageOrder,
+    rotateDegrees,
+    pageNumberStart,
+    pageNumberPosition,
+    pageNumberFontSize,
+    pageNumberMargin,
+    pageNumberPrefix,
+    runtimeServices
+  ]);
 
   if (pdfTools.length === 0) {
     return <p>PDF tool registry is not configured correctly.</p>;
@@ -233,7 +264,15 @@ export function PdfToolsWorkspace() {
     setFileError(null);
     setFileStatus(
       toolId !== "merge-pdf" && pdfItems.length > 1
-        ? `Kept the first PDF file for ${toolId === "split-pdf" ? "split" : toolId === "reorder-pdf" ? "reorder" : "rotate"}.`
+        ? `Kept the first PDF file for ${
+            toolId === "split-pdf"
+              ? "split"
+              : toolId === "reorder-pdf"
+                ? "reorder"
+                : toolId === "page-numbers-pdf"
+                  ? "page numbers"
+                  : "rotate"
+          }.`
         : null
     );
   }
@@ -245,7 +284,17 @@ export function PdfToolsWorkspace() {
 
     const result = await activeTool.run({
       sourceDocuments: pdfItems.map((item) => item.sourceDocument),
-      settings: buildPdfToolSettings(activeTool.id, true, rotateDegrees, reorderPageOrder),
+      settings: buildPdfToolSettings(
+        activeTool.id,
+        true,
+        rotateDegrees,
+        reorderPageOrder,
+        pageNumberStart,
+        pageNumberPosition,
+        pageNumberFontSize,
+        pageNumberMargin,
+        pageNumberPrefix
+      ),
       exportOptions: {
         fileName: getPdfExportFileName(activeTool.id),
         pageSize: "A4",
@@ -304,11 +353,21 @@ export function PdfToolsWorkspace() {
           <PdfToolSettingsPanel
             toolId={activeTool.id}
             rotateDegrees={rotateDegrees}
+            pageNumberStart={pageNumberStart}
+            pageNumberPosition={pageNumberPosition}
+            pageNumberFontSize={pageNumberFontSize}
+            pageNumberMargin={pageNumberMargin}
+            pageNumberPrefix={pageNumberPrefix}
             reorderPageCount={reorderPageCount}
             reorderPageOrder={reorderPageOrder}
             reorderLoading={reorderLoading}
             reorderError={reorderError}
             onRotateDegreesChange={setRotateDegrees}
+            onPageNumberStartChange={(value) => setPageNumberStart(normalizeInteger(value, 1, 1, 999999))}
+            onPageNumberPositionChange={setPageNumberPosition}
+            onPageNumberFontSizeChange={(value) => setPageNumberFontSize(normalizeInteger(value, 12, 6, 72))}
+            onPageNumberMarginChange={(value) => setPageNumberMargin(normalizeInteger(value, 24, 0, 200))}
+            onPageNumberPrefixChange={(value) => setPageNumberPrefix(value.slice(0, 40))}
             onMoveReorderPage={handleMoveReorderPage}
             onRemoveReorderPage={handleRemoveReorderPage}
             onRestoreReorderPage={handleRestoreReorderPage}
@@ -373,7 +432,12 @@ function buildPdfToolSettings(
   toolId: PdfToolId,
   generatePdf: boolean,
   rotateDegrees: 90 | 180 | 270,
-  reorderPageOrder: number[]
+  reorderPageOrder: number[],
+  pageNumberStart: number,
+  pageNumberPosition: "bottom-center" | "bottom-right" | "top-center" | "top-right",
+  pageNumberFontSize: number,
+  pageNumberMargin: number,
+  pageNumberPrefix: string
 ) {
   if (toolId === "reorder-pdf") {
     return {
@@ -386,6 +450,17 @@ function buildPdfToolSettings(
     return {
       generatePdf,
       degrees: rotateDegrees
+    };
+  }
+
+  if (toolId === "page-numbers-pdf") {
+    return {
+      generatePdf,
+      startNumber: pageNumberStart,
+      position: pageNumberPosition,
+      fontSize: pageNumberFontSize,
+      margin: pageNumberMargin,
+      prefix: pageNumberPrefix
     };
   }
 
@@ -423,4 +498,9 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
   }
 
   return new TextEncoder().encode(content);
+}
+
+function normalizeInteger(value: number, fallback: number, min: number, max: number): number {
+  const next = Number.isFinite(value) ? Math.trunc(value) : fallback;
+  return Math.min(max, Math.max(min, next));
 }

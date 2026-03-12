@@ -171,3 +171,32 @@ Still not implemented:
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `crop-pdf`
+
+## Phase 10.4 - Page Numbers PDF
+
+- Kept the existing PDF workspace and `ToolPlugin` architecture
+- Implemented `page-numbers-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - choose a start number
+  - choose a preset position
+  - choose font size and edge margin
+  - optionally add prefix text such as `Page `
+  - export the numbered PDF in browser
+- Extended `UnifiedPdfEngine` with a working `pageNumbers()` method
+- Implemented the page-number insertion path through the existing `pdf-engine` adapter layer using `pdf-lib`
+- Kept the preview/UI lightweight and summary-based rather than adding page thumbnails or freeform positioning
+
+### Current limitation after Phase 10.4
+
+Implemented PDF manipulation tools:
+
+- `merge-pdf`
+- `split-pdf`
+- `reorder-pdf`
+- `page-numbers-pdf`
+- `rotate-pdf`
+
+Still not implemented:
+
+- `watermark-pdf`
+- `crop-pdf`

@@ -136,3 +136,34 @@ Users can now:
 - no split/rotate/reorder/delete workflow yet
 - no page thumbnails yet
 - preview is currently a lightweight merge summary, not a page-level preview
+
+## Phase 10.4
+
+Minimal PDF manipulation workflow: Add Page Numbers.
+
+### Scope
+
+Add a small single-file PDF enhancement feature that fits the existing architecture.
+
+### Architectural changes
+
+- replaced the `page-numbers-pdf` placeholder plugin with a working implementation
+- implemented browser-side page numbering through `UnifiedPdfEngine.pageNumbers()`
+- reused the existing PDF workspace settings/apply flow for a minimal single-file tool
+- kept the feature on the `pdf-engine` manipulation path with `pdf-lib`
+
+### Result
+
+Users can now:
+
+- select the add page numbers tool
+- upload one PDF
+- choose start number, preset position, font size, margin, and optional prefix text
+- preview the planned operation as a lightweight summary
+- export the updated PDF in browser
+
+### Limitations
+
+- page-number placement uses fixed presets only
+- no page thumbnails or freeform positioning
+- uses a standard embedded PDF font for numbering

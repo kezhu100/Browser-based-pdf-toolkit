@@ -1,5 +1,11 @@
-import { degrees, PDFDocument } from "pdf-lib";
-import type { MergePdfRequest, ReorderPdfRequest, RotatePdfRequest, SplitPdfRequest } from "../interfaces";
+import { degrees, PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import type {
+  MergePdfRequest,
+  PageNumbersPdfRequest,
+  ReorderPdfRequest,
+  RotatePdfRequest,
+  SplitPdfRequest
+} from "../interfaces";
 import type { Result } from "../../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../../types/pdf-engine";
 
@@ -173,6 +179,81 @@ export async function rotatePdfFile(request: RotatePdfRequest): Promise<Result<P
   }
 }
 
+export async function addPageNumbersToPdfFile(request: PageNumbersPdfRequest): Promise<Result<PdfOperationResult>> {
+  if (request.file.bytes.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Add Page Numbers requires a non-empty PDF file."
+      }
+    };
+  }
+
+  try {
+    const document = await PDFDocument.load(request.file.bytes);
+    const pageCount = document.getPageCount();
+
+    if (pageCount === 0) {
+      return {
+        ok: false,
+        error: {
+          code: "INVALID_INPUT",
+          message: "The selected PDF has no pages to number."
+        }
+      };
+    }
+
+    const font = await document.embedFont(StandardFonts.Helvetica);
+    const fontSize = clampInteger(request.fontSize, 12, 6, 72);
+    const margin = clampInteger(request.margin, 24, 0, 200);
+    const startNumber = clampInteger(request.startNumber, 1, 1, 999999);
+
+    for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+      const page = document.getPage(pageIndex);
+      const pageNumberText = `${request.prefix}${startNumber + pageIndex}`;
+      const textWidth = font.widthOfTextAtSize(pageNumberText, fontSize);
+      const { width, height } = page.getSize();
+      const coordinates = getPageNumberCoordinates({
+        width,
+        height,
+        textWidth,
+        fontSize,
+        margin,
+        position: request.position
+      });
+
+      page.drawText(pageNumberText, {
+        x: coordinates.x,
+        y: coordinates.y,
+        size: fontSize,
+        font,
+        color: rgb(0, 0, 0)
+      });
+    }
+
+    const bytes = await document.save();
+
+    return {
+      ok: true,
+      data: {
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
+        fileName: ensurePdfFileName(request.fileName, "page-numbers"),
+        mimeType: "application/pdf"
+      }
+    };
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        code: "PDF_ENGINE_ERROR",
+        message: "Failed to add page numbers to the PDF in the browser.",
+        cause
+      }
+    };
+  }
+}
+
 export async function reorderPdfFile(request: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
   if (request.file.bytes.length === 0) {
     return {
@@ -278,6 +359,36 @@ function ensurePdfFileStem(fileName: string): string {
   }
 
   return trimmed.toLowerCase().endsWith(".pdf") ? trimmed.slice(0, -4) : trimmed;
+}
+
+function getPageNumberCoordinates(params: {
+  width: number;
+  height: number;
+  textWidth: number;
+  fontSize: number;
+  margin: number;
+  position: "bottom-center" | "bottom-right" | "top-center" | "top-right";
+}): { x: number; y: number } {
+  const centeredX = Math.max(params.margin, (params.width - params.textWidth) / 2);
+  const rightAlignedX = Math.max(params.margin, params.width - params.margin - params.textWidth);
+  const bottomY = Math.max(0, params.margin);
+  const topY = Math.max(0, params.height - params.margin - params.fontSize);
+
+  if (params.position === "bottom-center") {
+    return { x: centeredX, y: bottomY };
+  }
+  if (params.position === "bottom-right") {
+    return { x: rightAlignedX, y: bottomY };
+  }
+  if (params.position === "top-center") {
+    return { x: centeredX, y: topY };
+  }
+  return { x: rightAlignedX, y: topY };
+}
+
+function clampInteger(value: number | undefined, fallback: number, min: number, max: number): number {
+  const next = Number.isFinite(value) ? Math.trunc(value as number) : fallback;
+  return Math.min(max, Math.max(min, next));
 }
 
 function toPdfBlobPart(bytes: Uint8Array): ArrayBuffer {
