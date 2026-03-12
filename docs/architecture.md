@@ -90,6 +90,7 @@ Current implemented manipulation tools:
 - `merge-pdf`
 - `split-pdf`
 - `reorder-pdf`
+- `watermark-pdf`
 - `page-numbers-pdf`
 - `rotate-pdf`
 
@@ -128,6 +129,7 @@ Current responsibilities:
 - `merge()` for PDF manipulation
 - `split()` for single-file page splitting
 - `reorder()` for page reorder/delete export
+- `watermark()` for watermark export
 - `pageNumbers()` for page numbering export
 - `rotate()` for page rotation
 
@@ -135,11 +137,10 @@ Current implementation details:
 
 - content/image PDF generation uses the HTML-based generator
 - merge uses `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
-- split, reorder, page numbering, and rotate also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
+- split, reorder, watermarking, page numbering, and rotate also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
 
 Not yet implemented in the engine:
 
-- `watermark()`
 - `crop()`
 
 ## ToolPlugin Contract
@@ -180,7 +181,7 @@ SourceDocument
 
 ```text
 PDF SourceDocument[]
-  -> merge/split/rotate ToolPlugin.run()
+  -> merge/split/reorder/watermark/page-numbers/rotate ToolPlugin.run()
   -> UnifiedPdfEngine manipulation method
   -> pdfEditAdapter
   -> pdf-lib edit in browser

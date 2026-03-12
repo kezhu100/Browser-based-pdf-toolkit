@@ -149,6 +149,7 @@ Implemented:
   - Merge PDF
   - Split PDF
   - Reorder PDF pages
+  - Add Watermark
   - Add Page Numbers
   - Rotate PDF
 
@@ -164,8 +165,8 @@ Current UI/workspace behavior:
 
 Important limitation:
 
-- `merge-pdf`, `split-pdf`, `reorder-pdf`, `page-numbers-pdf`, and `rotate-pdf` are implemented
-- `watermark-pdf` and `crop-pdf` remain unimplemented placeholders
+- `merge-pdf`, `split-pdf`, `reorder-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `rotate-pdf` are implemented
+- `crop-pdf` remains an unimplemented placeholder
 
 ## 6. Deployment Architecture
 
@@ -274,6 +275,7 @@ Current status:
 - merge-pdf working in browser
 - split-pdf working in browser
 - reorder-pdf working in browser
+- watermark-pdf working in browser
 - page-numbers-pdf working in browser
 - rotate-pdf working in browser
 - Phase 10.2 polish pass applied for workspace UX wording, single-file tool switching, and small PDF adapter memory cleanup
@@ -302,11 +304,11 @@ Completed:
 - Phase 10.2 - split PDF + rotate PDF
 - Phase 10.3 - reorder PDF pages + page removal
 - Phase 10.4 - page numbers
+- Phase 10.5 - watermark
 
 Next likely steps:
 
 - later document enhancement
-  - watermark
   - crop
 
 ## 11. Codex Prompt Template
@@ -390,4 +392,4 @@ Future AI sessions must keep in mind:
 - `HashRouter` is required for GitHub Pages
 - content/image tools use `DocumentPipeline`
 - PDF manipulation tools should extend the `pdf-engine` path
-- `merge-pdf`, `split-pdf`, `reorder-pdf`, `page-numbers-pdf`, and `rotate-pdf` are implemented for PDF manipulation at the current state
+- `merge-pdf`, `split-pdf`, `reorder-pdf`, `watermark-pdf`, `page-numbers-pdf`, and `rotate-pdf` are implemented for PDF manipulation at the current state

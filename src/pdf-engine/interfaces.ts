@@ -33,8 +33,13 @@ export interface ReorderPdfRequest {
 
 export interface WatermarkPdfRequest {
   file: PdfBinary;
-  text: string;
   fileName: string;
+  text: string;
+  opacity: number;
+  fontSize: number;
+  rotation: number;
+  position: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  margin: number;
 }
 
 export interface PageNumbersPdfRequest {

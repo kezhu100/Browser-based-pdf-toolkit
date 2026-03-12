@@ -48,6 +48,14 @@ export function PdfToolsWorkspace() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
   const [rotateDegrees, setRotateDegrees] = useState<90 | 180 | 270>(90);
+  const [watermarkText, setWatermarkText] = useState<string>("CONFIDENTIAL");
+  const [watermarkOpacity, setWatermarkOpacity] = useState<number>(0.2);
+  const [watermarkFontSize, setWatermarkFontSize] = useState<number>(48);
+  const [watermarkRotation, setWatermarkRotation] = useState<number>(-30);
+  const [watermarkPosition, setWatermarkPosition] = useState<"center" | "top-left" | "top-right" | "bottom-left" | "bottom-right">(
+    "center"
+  );
+  const [watermarkMargin, setWatermarkMargin] = useState<number>(24);
   const [pageNumberStart, setPageNumberStart] = useState<number>(1);
   const [pageNumberPosition, setPageNumberPosition] = useState<"bottom-center" | "bottom-right" | "top-center" | "top-right">(
     "bottom-center"
@@ -157,6 +165,12 @@ export function PdfToolsWorkspace() {
           false,
           rotateDegrees,
           reorderPageOrder,
+          watermarkText,
+          watermarkOpacity,
+          watermarkFontSize,
+          watermarkRotation,
+          watermarkPosition,
+          watermarkMargin,
           pageNumberStart,
           pageNumberPosition,
           pageNumberFontSize,
@@ -202,6 +216,12 @@ export function PdfToolsWorkspace() {
     reorderPageCount,
     reorderPageOrder,
     rotateDegrees,
+    watermarkText,
+    watermarkOpacity,
+    watermarkFontSize,
+    watermarkRotation,
+    watermarkPosition,
+    watermarkMargin,
     pageNumberStart,
     pageNumberPosition,
     pageNumberFontSize,
@@ -269,6 +289,8 @@ export function PdfToolsWorkspace() {
               ? "split"
               : toolId === "reorder-pdf"
                 ? "reorder"
+                : toolId === "watermark-pdf"
+                  ? "watermark"
                 : toolId === "page-numbers-pdf"
                   ? "page numbers"
                   : "rotate"
@@ -289,6 +311,12 @@ export function PdfToolsWorkspace() {
         true,
         rotateDegrees,
         reorderPageOrder,
+        watermarkText,
+        watermarkOpacity,
+        watermarkFontSize,
+        watermarkRotation,
+        watermarkPosition,
+        watermarkMargin,
         pageNumberStart,
         pageNumberPosition,
         pageNumberFontSize,
@@ -353,6 +381,12 @@ export function PdfToolsWorkspace() {
           <PdfToolSettingsPanel
             toolId={activeTool.id}
             rotateDegrees={rotateDegrees}
+            watermarkText={watermarkText}
+            watermarkOpacity={watermarkOpacity}
+            watermarkFontSize={watermarkFontSize}
+            watermarkRotation={watermarkRotation}
+            watermarkPosition={watermarkPosition}
+            watermarkMargin={watermarkMargin}
             pageNumberStart={pageNumberStart}
             pageNumberPosition={pageNumberPosition}
             pageNumberFontSize={pageNumberFontSize}
@@ -363,6 +397,12 @@ export function PdfToolsWorkspace() {
             reorderLoading={reorderLoading}
             reorderError={reorderError}
             onRotateDegreesChange={setRotateDegrees}
+            onWatermarkTextChange={(value) => setWatermarkText(value.slice(0, 120))}
+            onWatermarkOpacityChange={(value) => setWatermarkOpacity(normalizeNumber(value, 0.2, 0.05, 1))}
+            onWatermarkFontSizeChange={(value) => setWatermarkFontSize(normalizeInteger(value, 48, 8, 144))}
+            onWatermarkRotationChange={(value) => setWatermarkRotation(normalizeInteger(value, -30, -180, 180))}
+            onWatermarkPositionChange={setWatermarkPosition}
+            onWatermarkMarginChange={(value) => setWatermarkMargin(normalizeInteger(value, 24, 0, 200))}
             onPageNumberStartChange={(value) => setPageNumberStart(normalizeInteger(value, 1, 1, 999999))}
             onPageNumberPositionChange={setPageNumberPosition}
             onPageNumberFontSizeChange={(value) => setPageNumberFontSize(normalizeInteger(value, 12, 6, 72))}
@@ -433,6 +473,12 @@ function buildPdfToolSettings(
   generatePdf: boolean,
   rotateDegrees: 90 | 180 | 270,
   reorderPageOrder: number[],
+  watermarkText: string,
+  watermarkOpacity: number,
+  watermarkFontSize: number,
+  watermarkRotation: number,
+  watermarkPosition: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right",
+  watermarkMargin: number,
   pageNumberStart: number,
   pageNumberPosition: "bottom-center" | "bottom-right" | "top-center" | "top-right",
   pageNumberFontSize: number,
@@ -450,6 +496,18 @@ function buildPdfToolSettings(
     return {
       generatePdf,
       degrees: rotateDegrees
+    };
+  }
+
+  if (toolId === "watermark-pdf") {
+    return {
+      generatePdf,
+      text: watermarkText,
+      opacity: watermarkOpacity,
+      fontSize: watermarkFontSize,
+      rotation: watermarkRotation,
+      position: watermarkPosition,
+      margin: watermarkMargin
     };
   }
 
@@ -502,5 +560,10 @@ function toUint8Array(content: string | ArrayBuffer | Uint8Array): Uint8Array {
 
 function normalizeInteger(value: number, fallback: number, min: number, max: number): number {
   const next = Number.isFinite(value) ? Math.trunc(value) : fallback;
+  return Math.min(max, Math.max(min, next));
+}
+
+function normalizeNumber(value: number, fallback: number, min: number, max: number): number {
+  const next = Number.isFinite(value) ? value : fallback;
   return Math.min(max, Math.max(min, next));
 }

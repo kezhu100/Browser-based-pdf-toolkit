@@ -4,6 +4,12 @@ import { PdfPageOrderEditor } from "./PdfPageOrderEditor";
 interface PdfToolSettingsPanelProps {
   toolId: PdfToolId;
   rotateDegrees: 90 | 180 | 270;
+  watermarkText: string;
+  watermarkOpacity: number;
+  watermarkFontSize: number;
+  watermarkRotation: number;
+  watermarkPosition: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  watermarkMargin: number;
   pageNumberStart: number;
   pageNumberPosition: "bottom-center" | "bottom-right" | "top-center" | "top-right";
   pageNumberFontSize: number;
@@ -14,6 +20,12 @@ interface PdfToolSettingsPanelProps {
   reorderLoading: boolean;
   reorderError: string | null;
   onRotateDegreesChange: (degrees: 90 | 180 | 270) => void;
+  onWatermarkTextChange: (value: string) => void;
+  onWatermarkOpacityChange: (value: number) => void;
+  onWatermarkFontSizeChange: (value: number) => void;
+  onWatermarkRotationChange: (value: number) => void;
+  onWatermarkPositionChange: (value: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right") => void;
+  onWatermarkMarginChange: (value: number) => void;
   onPageNumberStartChange: (value: number) => void;
   onPageNumberPositionChange: (value: "bottom-center" | "bottom-right" | "top-center" | "top-right") => void;
   onPageNumberFontSizeChange: (value: number) => void;
@@ -29,6 +41,12 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
   const {
     toolId,
     rotateDegrees,
+    watermarkText,
+    watermarkOpacity,
+    watermarkFontSize,
+    watermarkRotation,
+    watermarkPosition,
+    watermarkMargin,
     pageNumberStart,
     pageNumberPosition,
     pageNumberFontSize,
@@ -39,6 +57,12 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
     reorderLoading,
     reorderError,
     onRotateDegreesChange,
+    onWatermarkTextChange,
+    onWatermarkOpacityChange,
+    onWatermarkFontSizeChange,
+    onWatermarkRotationChange,
+    onWatermarkPositionChange,
+    onWatermarkMarginChange,
     onPageNumberStartChange,
     onPageNumberPositionChange,
     onPageNumberFontSizeChange,
@@ -79,6 +103,78 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
             />
           ) : null}
         </>
+      ) : toolId === "watermark-pdf" ? (
+        <div className="settings-grid">
+          <label className="field">
+            <span>Watermark Text</span>
+            <input
+              type="text"
+              maxLength={120}
+              value={watermarkText}
+              onChange={(event) => onWatermarkTextChange(event.target.value)}
+              placeholder="CONFIDENTIAL"
+            />
+          </label>
+          <label className="field">
+            <span>Opacity</span>
+            <input
+              type="number"
+              min={0.05}
+              max={1}
+              step={0.05}
+              value={watermarkOpacity}
+              onChange={(event) => onWatermarkOpacityChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Font Size</span>
+            <input
+              type="number"
+              min={8}
+              max={144}
+              value={watermarkFontSize}
+              onChange={(event) => onWatermarkFontSizeChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Rotation</span>
+            <input
+              type="number"
+              min={-180}
+              max={180}
+              value={watermarkRotation}
+              onChange={(event) => onWatermarkRotationChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Position</span>
+            <select
+              value={watermarkPosition}
+              onChange={(event) =>
+                onWatermarkPositionChange(
+                  event.target.value as "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right"
+                )
+              }
+            >
+              <option value="center">Center</option>
+              <option value="top-left">Top left</option>
+              <option value="top-right">Top right</option>
+              <option value="bottom-left">Bottom left</option>
+              <option value="bottom-right">Bottom right</option>
+            </select>
+          </label>
+          <label className="field">
+            <span>Margin</span>
+            <input
+              type="number"
+              min={0}
+              max={200}
+              value={watermarkMargin}
+              onChange={(event) => onWatermarkMarginChange(Number(event.target.value))}
+            />
+          </label>
+          <p className="subtle">Phase 10.5 keeps watermarking minimal: text only, preset placement, browser-side export.</p>
+        </div>
       ) : toolId === "page-numbers-pdf" ? (
         <div className="settings-grid">
           <label className="field">

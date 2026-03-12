@@ -5,13 +5,15 @@ import type { PageNumbersPdfToolRunSettings } from "../../tools/plugins/pageNumb
 import type { ReorderPdfToolRunSettings } from "../../tools/plugins/reorderPdfTool";
 import type { RotatePdfToolRunSettings } from "../../tools/plugins/rotatePdfTool";
 import type { SplitPdfToolRunSettings } from "../../tools/plugins/splitPdfTool";
+import type { WatermarkPdfToolRunSettings } from "../../tools/plugins/watermarkPdfTool";
 
-export type PdfToolId = "merge-pdf" | "split-pdf" | "reorder-pdf" | "page-numbers-pdf" | "rotate-pdf";
+export type PdfToolId = "merge-pdf" | "split-pdf" | "reorder-pdf" | "watermark-pdf" | "page-numbers-pdf" | "rotate-pdf";
 
 export type PdfToolRunSettings =
   | MergePdfToolRunSettings
   | SplitPdfToolRunSettings
   | ReorderPdfToolRunSettings
+  | WatermarkPdfToolRunSettings
   | PageNumbersPdfToolRunSettings
   | RotatePdfToolRunSettings;
 

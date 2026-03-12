@@ -200,3 +200,32 @@ Still not implemented:
 
 - `watermark-pdf`
 - `crop-pdf`
+
+## Phase 10.5 - Watermark PDF
+
+- Kept the existing PDF workspace and `ToolPlugin` architecture
+- Implemented `watermark-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - enter watermark text
+  - choose opacity, font size, and rotation
+  - choose a preset position
+  - optionally adjust edge margin for corner presets
+  - export the watermarked PDF in browser
+- Extended `UnifiedPdfEngine` with a working `watermark()` method
+- Implemented the watermark insertion path through the existing `pdf-engine` adapter layer using `pdf-lib`
+- Kept the preview/UI lightweight and summary-based rather than adding thumbnails, overlays, or freeform positioning
+
+### Current limitation after Phase 10.5
+
+Implemented PDF manipulation tools:
+
+- `merge-pdf`
+- `split-pdf`
+- `reorder-pdf`
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `rotate-pdf`
+
+Still not implemented:
+
+- `crop-pdf`

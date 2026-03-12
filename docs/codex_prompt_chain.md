@@ -167,3 +167,35 @@ Users can now:
 - page-number placement uses fixed presets only
 - no page thumbnails or freeform positioning
 - uses a standard embedded PDF font for numbering
+
+## Phase 10.5
+
+Minimal PDF manipulation workflow: Add Watermark.
+
+### Scope
+
+Add a small single-file PDF watermark feature that fits the existing architecture.
+
+### Architectural changes
+
+- replaced the `watermark-pdf` placeholder plugin with a working implementation
+- implemented browser-side text watermarking through `UnifiedPdfEngine.watermark()`
+- reused the existing PDF workspace settings/apply flow for another minimal single-file tool
+- kept the feature on the `pdf-engine` manipulation path with `pdf-lib`
+
+### Result
+
+Users can now:
+
+- select the add watermark tool
+- upload one PDF
+- choose text, opacity, font size, rotation, position preset, and margin
+- preview the planned operation as a lightweight summary
+- export the updated PDF in browser
+
+### Limitations
+
+- text watermark only
+- preset placement only
+- no page thumbnails or freeform positioning
+- uses a standard embedded PDF font for watermark text

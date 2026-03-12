@@ -28,6 +28,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - Merge PDF
 - Split PDF
 - Reorder PDF Pages
+- Add Watermark
 - Add Page Numbers
 - Rotate PDF
 
@@ -38,6 +39,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - PDF 合并
 - PDF 拆分
 - PDF 页面重排
+- PDF 水印
 - PDF 页码
 - PDF 旋转
 
@@ -74,12 +76,12 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - `merge-pdf`
 - `split-pdf`
 - `reorder-pdf`
+- `watermark-pdf`
 - `page-numbers-pdf`
 - `rotate-pdf`
 
 ### Not implemented yet / 尚未实现
 
-- `watermark-pdf`
 - `crop-pdf`
 
 ## Tech Stack / 技术栈
@@ -148,11 +150,12 @@ Important deployment constraints:
 - Merge multiple PDF files in browser
 - Split one PDF into separate single-page PDFs
 - Reorder one PDF and remove pages before export
+- Add a text watermark to one PDF with preset placement
 - Add page numbers to one PDF with preset placement
 - Rotate one PDF by 90 / 180 / 270 degrees
 - local file validation
 - lightweight operation summary preview
-- browser download for merged, split, reordered, or rotated results
+- browser download for merged, split, reordered, watermarked, numbered, or rotated results
 
 Small Phase 10.2 polish:
 
@@ -176,12 +179,13 @@ Completed:
 - merge PDF
 - split PDF
 - reorder/delete page workflow
+- add watermark
 - add page numbers
 - rotate PDF
 
 Planned next:
 
-- watermark
+- crop
 
 ## Constraints
 

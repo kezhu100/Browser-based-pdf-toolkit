@@ -4,7 +4,8 @@ import type {
   PageNumbersPdfRequest,
   ReorderPdfRequest,
   RotatePdfRequest,
-  SplitPdfRequest
+  SplitPdfRequest,
+  WatermarkPdfRequest
 } from "../interfaces";
 import type { Result } from "../../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../../types/pdf-engine";
@@ -254,6 +255,94 @@ export async function addPageNumbersToPdfFile(request: PageNumbersPdfRequest): P
   }
 }
 
+export async function addWatermarkToPdfFile(request: WatermarkPdfRequest): Promise<Result<PdfOperationResult>> {
+  if (request.file.bytes.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Add Watermark requires a non-empty PDF file."
+      }
+    };
+  }
+
+  const text = request.text.trim();
+  if (text.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Watermark text cannot be empty."
+      }
+    };
+  }
+
+  try {
+    const document = await PDFDocument.load(request.file.bytes);
+    const pageCount = document.getPageCount();
+
+    if (pageCount === 0) {
+      return {
+        ok: false,
+        error: {
+          code: "INVALID_INPUT",
+          message: "The selected PDF has no pages to watermark."
+        }
+      };
+    }
+
+    const font = await document.embedFont(StandardFonts.Helvetica);
+    const opacity = clampNumber(request.opacity, 0.2, 0.05, 1);
+    const fontSize = clampInteger(request.fontSize, 48, 8, 144);
+    const rotation = clampInteger(request.rotation, -30, -180, 180);
+    const margin = clampInteger(request.margin, 24, 0, 200);
+
+    for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+      const page = document.getPage(pageIndex);
+      const textWidth = font.widthOfTextAtSize(text, fontSize);
+      const { width, height } = page.getSize();
+      const coordinates = getWatermarkCoordinates({
+        width,
+        height,
+        textWidth,
+        fontSize,
+        margin,
+        position: request.position
+      });
+
+      page.drawText(text, {
+        x: coordinates.x,
+        y: coordinates.y,
+        size: fontSize,
+        font,
+        color: rgb(0, 0, 0),
+        opacity,
+        rotate: degrees(rotation)
+      });
+    }
+
+    const bytes = await document.save();
+
+    return {
+      ok: true,
+      data: {
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
+        fileName: ensurePdfFileName(request.fileName, "watermarked"),
+        mimeType: "application/pdf"
+      }
+    };
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        code: "PDF_ENGINE_ERROR",
+        message: "Failed to add a watermark to the PDF in the browser.",
+        cause
+      }
+    };
+  }
+}
+
 export async function reorderPdfFile(request: ReorderPdfRequest): Promise<Result<PdfOperationResult>> {
   if (request.file.bytes.length === 0) {
     return {
@@ -386,8 +475,45 @@ function getPageNumberCoordinates(params: {
   return { x: rightAlignedX, y: topY };
 }
 
+function getWatermarkCoordinates(params: {
+  width: number;
+  height: number;
+  textWidth: number;
+  fontSize: number;
+  margin: number;
+  position: "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+}): { x: number; y: number } {
+  if (params.position === "center") {
+    return {
+      x: Math.max(0, (params.width - params.textWidth) / 2),
+      y: Math.max(0, (params.height - params.fontSize) / 2)
+    };
+  }
+
+  const leftX = Math.max(0, params.margin);
+  const rightX = Math.max(0, params.width - params.margin - params.textWidth);
+  const bottomY = Math.max(0, params.margin);
+  const topY = Math.max(0, params.height - params.margin - params.fontSize);
+
+  if (params.position === "top-left") {
+    return { x: leftX, y: topY };
+  }
+  if (params.position === "top-right") {
+    return { x: rightX, y: topY };
+  }
+  if (params.position === "bottom-left") {
+    return { x: leftX, y: bottomY };
+  }
+  return { x: rightX, y: bottomY };
+}
+
 function clampInteger(value: number | undefined, fallback: number, min: number, max: number): number {
   const next = Number.isFinite(value) ? Math.trunc(value as number) : fallback;
+  return Math.min(max, Math.max(min, next));
+}
+
+function clampNumber(value: number | undefined, fallback: number, min: number, max: number): number {
+  const next = Number.isFinite(value) ? Number(value) : fallback;
   return Math.min(max, Math.max(min, next));
 }
 
