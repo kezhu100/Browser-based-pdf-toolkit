@@ -1,5 +1,6 @@
 import { degrees, PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import type {
+  CropPdfRequest,
   MergePdfRequest,
   PageNumbersPdfRequest,
   ReorderPdfRequest,
@@ -337,6 +338,80 @@ export async function addWatermarkToPdfFile(request: WatermarkPdfRequest): Promi
       error: {
         code: "PDF_ENGINE_ERROR",
         message: "Failed to add a watermark to the PDF in the browser.",
+        cause
+      }
+    };
+  }
+}
+
+export async function cropPdfFile(request: CropPdfRequest): Promise<Result<PdfOperationResult>> {
+  if (request.file.bytes.length === 0) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_INPUT",
+        message: "Crop PDF requires a non-empty PDF file."
+      }
+    };
+  }
+
+  const top = clampInteger(request.top, 0, 0, 2000);
+  const right = clampInteger(request.right, 0, 0, 2000);
+  const bottom = clampInteger(request.bottom, 0, 0, 2000);
+  const left = clampInteger(request.left, 0, 0, 2000);
+
+  try {
+    const document = await PDFDocument.load(request.file.bytes);
+    const pageCount = document.getPageCount();
+
+    if (pageCount === 0) {
+      return {
+        ok: false,
+        error: {
+          code: "INVALID_INPUT",
+          message: "The selected PDF has no pages to crop."
+        }
+      };
+    }
+
+    for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+      const page = document.getPage(pageIndex);
+      const { width, height } = page.getSize();
+      const croppedWidth = width - left - right;
+      const croppedHeight = height - top - bottom;
+
+      if (croppedWidth <= 0 || croppedHeight <= 0) {
+        return {
+          ok: false,
+          error: {
+            code: "INVALID_INPUT",
+            message: `Crop insets are too large for page ${pageIndex + 1}.`
+          }
+        };
+      }
+
+      page.setCropBox(left, bottom, croppedWidth, croppedHeight);
+      page.setTrimBox(left, bottom, croppedWidth, croppedHeight);
+      page.setBleedBox(left, bottom, croppedWidth, croppedHeight);
+      page.setArtBox(left, bottom, croppedWidth, croppedHeight);
+    }
+
+    const bytes = await document.save();
+
+    return {
+      ok: true,
+      data: {
+        blob: new Blob([toPdfBlobPart(bytes)], { type: "application/pdf" }),
+        fileName: ensurePdfFileName(request.fileName, "cropped"),
+        mimeType: "application/pdf"
+      }
+    };
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        code: "PDF_ENGINE_ERROR",
+        message: "Failed to crop the PDF in the browser.",
         cause
       }
     };

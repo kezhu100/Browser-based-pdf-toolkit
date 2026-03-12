@@ -199,3 +199,34 @@ Users can now:
 - preset placement only
 - no page thumbnails or freeform positioning
 - uses a standard embedded PDF font for watermark text
+
+## Phase 10.6
+
+Minimal PDF manipulation workflow: Crop PDF.
+
+### Scope
+
+Add a small single-file PDF crop feature that fits the existing architecture.
+
+### Architectural changes
+
+- replaced the `crop-pdf` placeholder plugin with a working implementation
+- implemented browser-side fixed-inset cropping through `UnifiedPdfEngine.crop()`
+- reused the existing PDF workspace settings/apply flow for another minimal single-file tool
+- kept the feature on the `pdf-engine` manipulation path with `pdf-lib`
+
+### Result
+
+Users can now:
+
+- select the crop PDF tool
+- upload one PDF
+- choose top, right, bottom, and left inset values in points
+- preview the planned operation as a lightweight summary
+- export the updated PDF in browser
+
+### Limitations
+
+- fixed inset crop only
+- one crop setting applied to all pages
+- no crop rectangle editor, thumbnails, or page canvas preview

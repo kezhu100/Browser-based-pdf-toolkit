@@ -1,18 +1,8 @@
-import type {
-  CropPdfRequest,
-  MergePdfRequest,
-  PageNumbersPdfRequest,
-  PdfEditEngine,
-  ReorderPdfRequest,
-  RotatePdfRequest,
-  SplitPdfRequest,
-  UnifiedPdfEngine,
-  WatermarkPdfRequest
-} from "./interfaces";
+import type { CropPdfRequest, MergePdfRequest, PageNumbersPdfRequest, PdfEditEngine, ReorderPdfRequest, RotatePdfRequest, SplitPdfRequest, UnifiedPdfEngine, WatermarkPdfRequest } from "./interfaces";
 import type { Result } from "../types/common";
 import type { PdfOperationResult, PdfSplitResult } from "../types/pdf-engine";
 import { Html2PdfRenderEngine } from "./adapters/contentPdfGenerator";
-import { addPageNumbersToPdfFile, addWatermarkToPdfFile, mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
+import { addPageNumbersToPdfFile, addWatermarkToPdfFile, cropPdfFile, mergePdfFiles, reorderPdfFile, rotatePdfFile, splitPdfFile } from "./adapters/pdfEditAdapter";
 
 function notImplemented<T>(message: string): Result<T> {
   return {
@@ -50,7 +40,7 @@ export class BrowserUnifiedPdfEngine implements UnifiedPdfEngine, PdfEditEngine 
     return rotatePdfFile(request);
   }
 
-  async crop(_: CropPdfRequest): Promise<Result<PdfOperationResult>> {
-    return notImplemented("Crop PDF is not implemented in Phase 3.");
+  async crop(request: CropPdfRequest): Promise<Result<PdfOperationResult>> {
+    return cropPdfFile(request);
   }
 }

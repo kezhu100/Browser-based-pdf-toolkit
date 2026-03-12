@@ -61,9 +61,11 @@ export interface RotatePdfRequest {
 
 export interface CropPdfRequest {
   file: PdfBinary;
-  pages: number[];
-  box: PageBox;
   fileName: string;
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
 }
 
 export interface PdfRenderEngine {

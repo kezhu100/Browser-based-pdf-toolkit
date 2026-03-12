@@ -229,3 +229,31 @@ Implemented PDF manipulation tools:
 Still not implemented:
 
 - `crop-pdf`
+
+## Phase 10.6 - Crop PDF
+
+- Kept the existing PDF workspace and `ToolPlugin` architecture
+- Implemented `crop-pdf` with a minimal browser-side workflow:
+  - upload one PDF
+  - enter fixed crop insets for top, right, bottom, and left
+  - apply the same inset crop to all pages
+  - export the cropped PDF in browser
+- Extended `UnifiedPdfEngine` with a working `crop()` method
+- Implemented the crop path through the existing `pdf-engine` adapter layer using `pdf-lib`
+- Kept the preview/UI lightweight and summary-based rather than adding crop rectangles, thumbnails, or page canvas editing
+
+### Current limitation after Phase 10.6
+
+Implemented PDF manipulation tools:
+
+- `merge-pdf`
+- `split-pdf`
+- `reorder-pdf`
+- `watermark-pdf`
+- `page-numbers-pdf`
+- `rotate-pdf`
+- `crop-pdf`
+
+Still not implemented:
+
+- none currently

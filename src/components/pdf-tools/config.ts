@@ -4,7 +4,7 @@ import type { PdfFileItem, PdfToolId } from "./types";
 const PDF_MIME_TYPE = "application/pdf";
 const PDF_EXTENSION = ".pdf";
 
-export const PDF_TOOL_IDS: PdfToolId[] = ["merge-pdf", "split-pdf", "reorder-pdf", "watermark-pdf", "page-numbers-pdf", "rotate-pdf"];
+export const PDF_TOOL_IDS: PdfToolId[] = ["merge-pdf", "split-pdf", "reorder-pdf", "watermark-pdf", "page-numbers-pdf", "rotate-pdf", "crop-pdf"];
 
 export function isSupportedPdfFile(file: File): boolean {
   return file.type.toLowerCase() === PDF_MIME_TYPE || file.name.toLowerCase().endsWith(PDF_EXTENSION);
@@ -60,6 +60,9 @@ export function getPdfFileInputHint(toolId: PdfToolId): string {
   if (toolId === "page-numbers-pdf") {
     return "Select one PDF file to add page numbers in browser.";
   }
+  if (toolId === "crop-pdf") {
+    return "Select one PDF file to apply a fixed inset crop in browser.";
+  }
   return "Select one PDF file to rotate. Phase 10.2 rotates all pages in browser.";
 }
 
@@ -80,6 +83,9 @@ export function getPdfExportFileName(toolId: PdfToolId): string {
   }
   if (toolId === "page-numbers-pdf") {
     return `page-numbers-${timestamp}.pdf`;
+  }
+  if (toolId === "crop-pdf") {
+    return `cropped-${timestamp}.pdf`;
   }
   return `rotated-${timestamp}.pdf`;
 }

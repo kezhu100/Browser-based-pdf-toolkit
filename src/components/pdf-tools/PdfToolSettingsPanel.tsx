@@ -4,6 +4,10 @@ import { PdfPageOrderEditor } from "./PdfPageOrderEditor";
 interface PdfToolSettingsPanelProps {
   toolId: PdfToolId;
   rotateDegrees: 90 | 180 | 270;
+  cropTop: number;
+  cropRight: number;
+  cropBottom: number;
+  cropLeft: number;
   watermarkText: string;
   watermarkOpacity: number;
   watermarkFontSize: number;
@@ -20,6 +24,10 @@ interface PdfToolSettingsPanelProps {
   reorderLoading: boolean;
   reorderError: string | null;
   onRotateDegreesChange: (degrees: 90 | 180 | 270) => void;
+  onCropTopChange: (value: number) => void;
+  onCropRightChange: (value: number) => void;
+  onCropBottomChange: (value: number) => void;
+  onCropLeftChange: (value: number) => void;
   onWatermarkTextChange: (value: string) => void;
   onWatermarkOpacityChange: (value: number) => void;
   onWatermarkFontSizeChange: (value: number) => void;
@@ -41,6 +49,10 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
   const {
     toolId,
     rotateDegrees,
+    cropTop,
+    cropRight,
+    cropBottom,
+    cropLeft,
     watermarkText,
     watermarkOpacity,
     watermarkFontSize,
@@ -57,6 +69,10 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
     reorderLoading,
     reorderError,
     onRotateDegreesChange,
+    onCropTopChange,
+    onCropRightChange,
+    onCropBottomChange,
+    onCropLeftChange,
     onWatermarkTextChange,
     onWatermarkOpacityChange,
     onWatermarkFontSizeChange,
@@ -103,6 +119,50 @@ export function PdfToolSettingsPanel(props: PdfToolSettingsPanelProps) {
             />
           ) : null}
         </>
+      ) : toolId === "crop-pdf" ? (
+        <div className="settings-grid">
+          <label className="field">
+            <span>Top Inset</span>
+            <input
+              type="number"
+              min={0}
+              max={2000}
+              value={cropTop}
+              onChange={(event) => onCropTopChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Right Inset</span>
+            <input
+              type="number"
+              min={0}
+              max={2000}
+              value={cropRight}
+              onChange={(event) => onCropRightChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Bottom Inset</span>
+            <input
+              type="number"
+              min={0}
+              max={2000}
+              value={cropBottom}
+              onChange={(event) => onCropBottomChange(Number(event.target.value))}
+            />
+          </label>
+          <label className="field">
+            <span>Left Inset</span>
+            <input
+              type="number"
+              min={0}
+              max={2000}
+              value={cropLeft}
+              onChange={(event) => onCropLeftChange(Number(event.target.value))}
+            />
+          </label>
+          <p className="subtle">Phase 10.6 keeps cropping minimal: fixed inset values in points, applied to all pages in browser.</p>
+        </div>
       ) : toolId === "watermark-pdf" ? (
         <div className="settings-grid">
           <label className="field">

@@ -16,6 +16,9 @@ function getPdfToolActionLabel(toolId: PdfToolId): string {
   if (toolId === "page-numbers-pdf") {
     return "Add Page Numbers";
   }
+  if (toolId === "crop-pdf") {
+    return "Crop";
+  }
   return "Rotate";
 }
 

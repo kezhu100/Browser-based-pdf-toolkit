@@ -31,6 +31,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - Add Watermark
 - Add Page Numbers
 - Rotate PDF
+- Crop PDF
 
 - Markdown 转 PDF
 - TXT 转 PDF
@@ -42,6 +43,7 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - PDF 水印
 - PDF 页码
 - PDF 旋转
+- PDF 裁剪
 
 ### Implemented workspace families / 已实现工作区类型
 
@@ -79,10 +81,11 @@ https://kezhu100.github.io/Browser-based-pdf-toolkit/#/
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `rotate-pdf`
+- `crop-pdf`
 
 ### Not implemented yet / 尚未实现
 
-- `crop-pdf`
+- none currently
 
 ## Tech Stack / 技术栈
 
@@ -153,9 +156,10 @@ Important deployment constraints:
 - Add a text watermark to one PDF with preset placement
 - Add page numbers to one PDF with preset placement
 - Rotate one PDF by 90 / 180 / 270 degrees
+- Apply a fixed inset crop to one PDF in browser
 - local file validation
 - lightweight operation summary preview
-- browser download for merged, split, reordered, watermarked, numbered, or rotated results
+- browser download for merged, split, reordered, watermarked, numbered, rotated, or cropped results
 
 Small Phase 10.2 polish:
 
@@ -182,10 +186,11 @@ Completed:
 - add watermark
 - add page numbers
 - rotate PDF
+- crop PDF
 
 Planned next:
 
-- crop
+- later document enhancements
 
 ## Constraints
 

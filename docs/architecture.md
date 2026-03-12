@@ -93,6 +93,7 @@ Current implemented manipulation tools:
 - `watermark-pdf`
 - `page-numbers-pdf`
 - `rotate-pdf`
+- `crop-pdf`
 
 Placeholder manipulation tools still exist in the registry, but they are not implemented yet.
 
@@ -132,16 +133,17 @@ Current responsibilities:
 - `watermark()` for watermark export
 - `pageNumbers()` for page numbering export
 - `rotate()` for page rotation
+- `crop()` for fixed inset crop export
 
 Current implementation details:
 
 - content/image PDF generation uses the HTML-based generator
 - merge uses `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
-- split, reorder, watermarking, page numbering, and rotate also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
+- split, reorder, watermarking, page numbering, rotate, and crop also use `pdf-lib` through `src/pdf-engine/adapters/pdfEditAdapter.ts`
 
 Not yet implemented in the engine:
 
-- `crop()`
+- none currently
 
 ## ToolPlugin Contract
 
@@ -181,7 +183,7 @@ SourceDocument
 
 ```text
 PDF SourceDocument[]
-  -> merge/split/reorder/watermark/page-numbers/rotate ToolPlugin.run()
+  -> merge/split/reorder/watermark/page-numbers/rotate/crop ToolPlugin.run()
   -> UnifiedPdfEngine manipulation method
   -> pdfEditAdapter
   -> pdf-lib edit in browser

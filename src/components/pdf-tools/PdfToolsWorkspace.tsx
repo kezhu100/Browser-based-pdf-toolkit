@@ -48,6 +48,10 @@ export function PdfToolsWorkspace() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
   const [rotateDegrees, setRotateDegrees] = useState<90 | 180 | 270>(90);
+  const [cropTop, setCropTop] = useState<number>(0);
+  const [cropRight, setCropRight] = useState<number>(0);
+  const [cropBottom, setCropBottom] = useState<number>(0);
+  const [cropLeft, setCropLeft] = useState<number>(0);
   const [watermarkText, setWatermarkText] = useState<string>("CONFIDENTIAL");
   const [watermarkOpacity, setWatermarkOpacity] = useState<number>(0.2);
   const [watermarkFontSize, setWatermarkFontSize] = useState<number>(48);
@@ -165,6 +169,10 @@ export function PdfToolsWorkspace() {
           false,
           rotateDegrees,
           reorderPageOrder,
+          cropTop,
+          cropRight,
+          cropBottom,
+          cropLeft,
           watermarkText,
           watermarkOpacity,
           watermarkFontSize,
@@ -216,6 +224,10 @@ export function PdfToolsWorkspace() {
     reorderPageCount,
     reorderPageOrder,
     rotateDegrees,
+    cropTop,
+    cropRight,
+    cropBottom,
+    cropLeft,
     watermarkText,
     watermarkOpacity,
     watermarkFontSize,
@@ -293,6 +305,8 @@ export function PdfToolsWorkspace() {
                   ? "watermark"
                 : toolId === "page-numbers-pdf"
                   ? "page numbers"
+                : toolId === "crop-pdf"
+                  ? "crop"
                   : "rotate"
           }.`
         : null
@@ -311,6 +325,10 @@ export function PdfToolsWorkspace() {
         true,
         rotateDegrees,
         reorderPageOrder,
+        cropTop,
+        cropRight,
+        cropBottom,
+        cropLeft,
         watermarkText,
         watermarkOpacity,
         watermarkFontSize,
@@ -381,6 +399,10 @@ export function PdfToolsWorkspace() {
           <PdfToolSettingsPanel
             toolId={activeTool.id}
             rotateDegrees={rotateDegrees}
+            cropTop={cropTop}
+            cropRight={cropRight}
+            cropBottom={cropBottom}
+            cropLeft={cropLeft}
             watermarkText={watermarkText}
             watermarkOpacity={watermarkOpacity}
             watermarkFontSize={watermarkFontSize}
@@ -397,6 +419,10 @@ export function PdfToolsWorkspace() {
             reorderLoading={reorderLoading}
             reorderError={reorderError}
             onRotateDegreesChange={setRotateDegrees}
+            onCropTopChange={(value) => setCropTop(normalizeInteger(value, 0, 0, 2000))}
+            onCropRightChange={(value) => setCropRight(normalizeInteger(value, 0, 0, 2000))}
+            onCropBottomChange={(value) => setCropBottom(normalizeInteger(value, 0, 0, 2000))}
+            onCropLeftChange={(value) => setCropLeft(normalizeInteger(value, 0, 0, 2000))}
             onWatermarkTextChange={(value) => setWatermarkText(value.slice(0, 120))}
             onWatermarkOpacityChange={(value) => setWatermarkOpacity(normalizeNumber(value, 0.2, 0.05, 1))}
             onWatermarkFontSizeChange={(value) => setWatermarkFontSize(normalizeInteger(value, 48, 8, 144))}
@@ -473,6 +499,10 @@ function buildPdfToolSettings(
   generatePdf: boolean,
   rotateDegrees: 90 | 180 | 270,
   reorderPageOrder: number[],
+  cropTop: number,
+  cropRight: number,
+  cropBottom: number,
+  cropLeft: number,
   watermarkText: string,
   watermarkOpacity: number,
   watermarkFontSize: number,
@@ -496,6 +526,16 @@ function buildPdfToolSettings(
     return {
       generatePdf,
       degrees: rotateDegrees
+    };
+  }
+
+  if (toolId === "crop-pdf") {
+    return {
+      generatePdf,
+      top: cropTop,
+      right: cropRight,
+      bottom: cropBottom,
+      left: cropLeft
     };
   }
 
